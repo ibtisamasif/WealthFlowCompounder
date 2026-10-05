@@ -777,10 +777,243 @@
             gap: 10px;
             justify-content: flex-end;
         }
+
+        /* Net Worth Suggestion Chips & Modal Enhancements */
+        .nw-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            user-select: none;
+        }
+        .nw-chip:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+            transform: translateY(-1px);
+            background: rgba(16, 185, 129, 0.08);
+        }
+        .nw-tab-btn {
+            background: none;
+            border: none;
+            padding: 6px 12px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.15s ease;
+        }
+        .nw-tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .modal-box.modal-lg {
+            max-width: 620px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+        }
+        .nw-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .nw-modal-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nw-modal-tabs {
+            display: flex;
+            gap: 8px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+        .nw-modal-body {
+            overflow-y: auto;
+            flex: 1;
+            padding-right: 4px;
+            margin-bottom: 16px;
+        }
+        .nw-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        .nw-table th {
+            text-align: left;
+            padding: 8px 10px;
+            font-size: 0.68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-dim);
+            border-bottom: 1px solid var(--border);
+        }
+        .nw-table td {
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+        }
+        .nw-table tr:hover td {
+            background: rgba(99, 102, 241, 0.05);
+        }
+        .nw-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 6px;
+            background: rgba(99, 102, 241, 0.12);
+            color: var(--primary);
+        }
+        .nw-badge.green {
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--secondary);
+        }
+        .nw-badge.gold {
+            background: rgba(245, 158, 11, 0.12);
+            color: #f59e0b;
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            max-width: 1250px;
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 22px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            gap: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .nav-logo {
+            width: 32px;
+            height: 32px;
+            border-radius: 9px;
+            object-fit: contain;
+        }
+
+        .nav-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            background: var(--sunken);
+            padding: 4px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+        }
+
+        .nav-tab {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text-dim);
+            font-size: 0.82rem;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+
+        .nav-tab:hover {
+            color: var(--text-main);
+        }
+
+        .nav-tab.active {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 2px 10px var(--primary-glow);
+        }
+
+        .nav-badge {
+            font-size: 0.7rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 6px;
+            border-radius: 6px;
+            color: #ffffff;
+            font-weight: 800;
+        }
+
+        .savings-sync-link {
+            font-size: 0.65rem;
+            color: var(--accent);
+            text-transform: none;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            margin-left: auto;
+        }
+
+        .savings-sync-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .top-nav {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .nav-tabs {
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 
 <body>
+
+    <!-- Top Navigation Bar -->
+    <nav class="top-nav">
+        <a href="index.html" class="nav-brand">
+            <img src="logo.png" alt="WealthFlow Logo" class="nav-logo">
+            <span class="nav-title">WealthFlow</span>
+        </a>
+        <div class="nav-tabs">
+            <a href="index.html" class="nav-tab active">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                Compounder
+            </a>
+            <a href="networth.html" class="nav-tab">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path><path d="M12 18V6"></path></svg>
+                Net Worth Tracker
+                <span class="nav-badge" id="networthNavBadge" style="display:none;"></span>
+            </a>
+        </div>
+    </nav>
 
     <div class="wrapper">
         <div class="panel">
@@ -799,7 +1032,12 @@
             </div>
 
             <div class="input-grid">
-                <div class="field"><label>Current Savings</label><input type="number" id="savings" min="0" class="sensitive" placeholder="0">
+                <div class="field">
+                    <label style="display:flex; align-items:center;">
+                        <span>Current Savings</span>
+                        <a href="javascript:void(0)" onclick="loadNetWorthAsSavings()" id="syncNetWorthLink" class="savings-sync-link" style="display:none;" title="Use latest recorded Net Worth value">⚡ From Net Worth</a>
+                    </label>
+                    <input type="number" id="savings" min="0" class="sensitive" placeholder="0">
                 </div>
                 <div class="field"><label>Current Age</label><input type="number" id="age" min="0" value="25"></div>
                 <div class="field"><label>Monthly Salary</label><input type="number" id="salary" min="0" class="sensitive" placeholder="0"
@@ -815,10 +1053,30 @@
             </div>
 
             <div class="section-title space-out">
-                INVESTMENT PORTFOLIO SPLIT
-                <button class="btn-add" onclick="addInvestmentRow('', '', '')">+ Add Asset/Fund</button>
+                <span>INVESTMENT PORTFOLIO SPLIT</span>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button type="button" class="btn-add" id="networthSuggestBtn" style="display: none; border-color: var(--secondary); color: var(--secondary); font-size: 0.72rem; padding: 4px 10px;" onclick="openNetWorthSuggestModal()" title="Auto-fill suggestions from your Net Worth Tracker">
+                        ⚡ From Net Worth
+                    </button>
+                    <button class="btn-add" onclick="addInvestmentRow('', '', '')">+ Add Asset/Fund</button>
+                </div>
             </div>
+
+            <!-- Quick Suggestions Strip from Net Worth Tracker -->
+            <div id="networthQuickChips" style="display: none; margin-bottom: 12px; padding: 10px 12px; background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 12px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: var(--primary); letter-spacing: 0.06em; display: flex; align-items: center; gap: 5px;">
+                        💡 Net Worth Suggestions
+                    </span>
+                    <button type="button" onclick="autoFillAllNetWorthCategories()" style="font-size: 0.72rem; font-weight: 800; color: var(--secondary); cursor: pointer; background: none; border: none; padding: 0;" title="Auto-fill 100% split based on your actual net worth">
+                        ⚡ Auto-Fill All (100% Split)
+                    </button>
+                </div>
+                <div id="networthChipsList" style="display: flex; flex-wrap: wrap; gap: 6px;"></div>
+            </div>
+
             <div id="investmentsContainer"></div>
+            <datalist id="networthAssetDatalist"></datalist>
             <div id="weightWarning" class="warning">⚠️ Total Split should equal 100% for better results.</div>
 
             <div class="section-title space-out">
@@ -1229,6 +1487,7 @@
                 el.value = f.val;                      // set as a property: quotes in a name can't break the markup
                 if (f.type === 'number') el.step = 'any';
                 if (f.min !== undefined) el.min = f.min;
+                if (f.list) el.setAttribute('list', f.list);
                 wrap.appendChild(el);
                 row.appendChild(wrap);
             });
@@ -1243,7 +1502,7 @@
 
         function addInvestmentRow(name = '', split = '', ret = '') {
             makeRow('invest-row', 'investmentsContainer', [
-                { type: 'text', cls: 'title-input', ph: 'Fund/Asset Name', val: name },
+                { type: 'text', cls: 'title-input', ph: 'Fund/Asset Name', val: name, list: 'networthAssetDatalist' },
                 { type: 'number', cls: 'weight-input', ph: '% Split', val: split, min: 0 },
                 { type: 'number', cls: 'return-input', ph: '% Return', val: ret }
             ]);
@@ -1270,6 +1529,9 @@
             if (el.matches && el.matches('input[type=number][min="0"]') && parseFloat(el.value) < 0) {
                 el.value = 0;
                 calculate();
+            }
+            if (el.matches && el.matches('.title-input')) {
+                onInvestmentTitlePicked(el);
             }
         });
 
@@ -1871,6 +2133,619 @@
             return { pass, fail };
         }
 
+        /* ----------------------- net worth portfolio suggestions ----------------------- */
+
+        function getNetWorthData() {
+            let state = null;
+            try {
+                const raw = localStorage.getItem('wealth_networth_current_state') || localStorage.getItem('wealth_networth_user_save');
+                if (raw) state = JSON.parse(raw);
+            } catch (e) {}
+
+            let totals = null;
+            try {
+                const rawT = localStorage.getItem('wealth_networth_totals');
+                if (rawT) totals = JSON.parse(rawT);
+            } catch (e) {}
+
+            if (!state && !totals) return null;
+
+            const cars = (state && state.cars) || [];
+            const gold = (state && state.gold) || [];
+            const stocks = (state && state.stocks) || [];
+            const estates = (state && state.estates) || [];
+            const cash = (state && state.cash) || [];
+
+            const goldRate24k = parseFloat(document.getElementById('gold')?.value) || 280000;
+
+            const sumCars = cars.reduce((s, c) => s + (parseFloat(c.val) || 0), 0);
+            const sumGold = gold.reduce((s, g) => {
+                let v = parseFloat(g.val) || 0;
+                if (v <= 0 && parseFloat(g.qty) > 0) {
+                    const km = (g.karat === '24K' ? 1 : g.karat === '22K' ? 22 / 24 : g.karat === '18K' ? 18 / 24 : 21 / 24);
+                    const rate = goldRate24k * km;
+                    v = (g.unit === 'gram' ? (parseFloat(g.qty) / 11.6638) * rate : parseFloat(g.qty) * rate);
+                }
+                return s + v;
+            }, 0);
+
+            const sumStocks = stocks.reduce((s, st) => {
+                let v = parseFloat(st.val) || 0;
+                if (v <= 0 && parseFloat(st.qty) > 0) {
+                    v = (parseFloat(st.qty) || 0) * (parseFloat(st.price) || 0);
+                }
+                return s + v;
+            }, 0);
+
+            const sumEstates = estates.reduce((s, e) => s + (parseFloat(e.val) || 0), 0);
+            const sumCash = cash.reduce((s, c) => s + (parseFloat(c.val) || 0), 0);
+
+            const totalVehicles = sumCars || (totals ? parseFloat(totals.vehicles) || 0 : 0);
+            const totalGold = sumGold || (totals ? parseFloat(totals.gold) || 0 : 0);
+            const totalStocks = sumStocks || (totals ? parseFloat(totals.stocks) || 0 : 0);
+            const totalEstates = sumEstates || (totals ? parseFloat(totals.realEstate) || 0 : 0);
+            const totalCash = sumCash || (totals ? parseFloat(totals.cash) || 0 : 0);
+
+            const totalAssets = totalVehicles + totalGold + totalStocks + totalEstates + totalCash;
+            if (totalAssets <= 0) return null;
+
+            const categories = [
+                {
+                    id: 'stocks',
+                    name: 'PSX Equities / Stocks',
+                    icon: '📈',
+                    val: totalStocks,
+                    expectedReturn: 15,
+                    items: stocks.map(s => {
+                        const v = (parseFloat(s.val) || 0) || ((parseFloat(s.qty) || 0) * (parseFloat(s.price) || 0));
+                        return {
+                            name: `${s.ticker || 'PSX Stock'} Equities`,
+                            detail: `${s.ticker || 'PSX'} (${Number(s.qty || 0).toLocaleString()} sh @ Rs. ${s.price || 0})`,
+                            val: v,
+                            expectedReturn: 15
+                        };
+                    }).filter(i => i.val > 0)
+                },
+                {
+                    id: 'gold',
+                    name: 'Physical Gold & Bullion',
+                    icon: '🟡',
+                    val: totalGold,
+                    expectedReturn: 12,
+                    items: gold.map(g => {
+                        let v = parseFloat(g.val) || 0;
+                        if (v <= 0 && parseFloat(g.qty) > 0) {
+                            const km = (g.karat === '24K' ? 1 : g.karat === '22K' ? 22 / 24 : g.karat === '18K' ? 18 / 24 : 21 / 24);
+                            const rate = goldRate24k * km;
+                            v = (g.unit === 'gram' ? (parseFloat(g.qty) / 11.6638) * rate : parseFloat(g.qty) * rate);
+                        }
+                        return {
+                            name: `Physical Gold (${g.name || g.karat || '21K'})`,
+                            detail: `${g.name || 'Gold'} (${g.karat || '21K'}, ${g.qty || 0} ${g.unit || 'tola'})`,
+                            val: v,
+                            expectedReturn: 12
+                        };
+                    }).filter(i => i.val > 0)
+                },
+                {
+                    id: 'estates',
+                    name: 'Real Estate & Properties',
+                    icon: '🏢',
+                    val: totalEstates,
+                    expectedReturn: 10,
+                    items: estates.map(e => ({
+                        name: `Real Estate (${e.name || 'Property'})`,
+                        detail: `${e.name || 'Property'}${e.type ? ' (' + e.type + ')' : ''}`,
+                        val: parseFloat(e.val) || 0,
+                        expectedReturn: 10
+                    })).filter(i => i.val > 0)
+                },
+                {
+                    id: 'cash',
+                    name: 'Cash & Fixed Income / Bank',
+                    icon: '💵',
+                    val: totalCash,
+                    expectedReturn: 11,
+                    items: cash.map(c => ({
+                        name: `Cash / Bank (${c.name || 'Savings'})`,
+                        detail: `${c.name || 'Cash'}${c.cat ? ' (' + c.cat + ')' : ''}`,
+                        val: parseFloat(c.val) || 0,
+                        expectedReturn: 11
+                    })).filter(i => i.val > 0)
+                },
+                {
+                    id: 'cars',
+                    name: 'Vehicles / Automobiles',
+                    icon: '🚗',
+                    val: totalVehicles,
+                    expectedReturn: 0,
+                    items: cars.map(c => ({
+                        name: `Vehicle (${c.make || 'Car'})`,
+                        detail: `${c.make || 'Car'}${c.year ? ' (' + c.year + ')' : ''}`,
+                        val: parseFloat(c.val) || 0,
+                        expectedReturn: 0
+                    })).filter(i => i.val > 0)
+                }
+            ].filter(c => c.val > 0);
+
+            return { state, totals, totalAssets, categories };
+        }
+
+        function normalizePercentages(items) {
+            if (!items || items.length === 0) return [];
+            if (items.length === 1) {
+                return [{ ...items[0], weight: 100 }];
+            }
+            const totalVal = items.reduce((sum, item) => sum + (parseFloat(item.val) || 0), 0);
+            if (totalVal <= 0) {
+                const even = Number((100 / items.length).toFixed(1));
+                return items.map((it, idx) => ({
+                    ...it,
+                    weight: idx === 0 ? Number((100 - even * (items.length - 1)).toFixed(1)) : even
+                }));
+            }
+
+            let runningSum = 0;
+            const result = items.map(item => {
+                const raw = ((parseFloat(item.val) || 0) / totalVal) * 100;
+                const rounded = Number(raw.toFixed(1));
+                runningSum += rounded;
+                return { ...item, weight: rounded };
+            });
+
+            const diff = Number((100 - runningSum).toFixed(1));
+            if (Math.abs(diff) > 1e-6) {
+                let maxIdx = 0;
+                for (let i = 1; i < result.length; i++) {
+                    if (result[i].weight > result[maxIdx].weight) maxIdx = i;
+                }
+                result[maxIdx].weight = Number((result[maxIdx].weight + diff).toFixed(1));
+            }
+            return result;
+        }
+
+        function renderNetWorthSuggestions() {
+            const btn = document.getElementById('networthSuggestBtn');
+            const strip = document.getElementById('networthQuickChips');
+            const chipsList = document.getElementById('networthChipsList');
+            const datalist = document.getElementById('networthAssetDatalist');
+
+            const nw = getNetWorthData();
+            if (!nw || nw.categories.length === 0) {
+                if (btn) btn.style.display = 'none';
+                if (strip) {
+                    strip.style.display = 'block';
+                    strip.innerHTML = `
+                        <div style="font-size: 0.74rem; color: var(--text-dim); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                            <span>💡 Tip: Track your <b>Gold, Cars, PSX Stocks, Property &amp; Cash</b> in the Net Worth Tracker to auto-fill suggestions.</span>
+                            <a href="networth.html" class="nw-chip" style="color: var(--secondary); border-color: var(--secondary); text-decoration: none;">Open Net Worth Tracker &rarr;</a>
+                        </div>
+                    `;
+                }
+                if (datalist) datalist.innerHTML = '';
+                return;
+            }
+
+            if (btn) {
+                btn.style.display = 'inline-flex';
+                btn.innerText = `⚡ From Net Worth (${compact(nw.totalAssets)})`;
+            }
+
+            if (strip) {
+                strip.style.display = 'block';
+                strip.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+                        <span style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: var(--primary); letter-spacing: 0.06em; display: flex; align-items: center; gap: 5px;">
+                            💡 Net Worth Suggestions (${rs(nw.totalAssets)})
+                        </span>
+                        <div style="display: flex; gap: 8px;">
+                            <button type="button" onclick="autoFillAllNetWorthCategories()" style="font-size: 0.72rem; font-weight: 800; color: var(--secondary); cursor: pointer; background: none; border: none; padding: 0;" title="Auto-fill 100% split based on your actual net worth">
+                                ⚡ Auto-Fill All (100% Split)
+                            </button>
+                        </div>
+                    </div>
+                    <div id="networthChipsList" style="display: flex; flex-wrap: wrap; gap: 6px;"></div>
+                `;
+
+                const freshChipsList = document.getElementById('networthChipsList');
+                const normalized = normalizePercentages(nw.categories);
+
+                normalized.forEach(c => {
+                    const chip = document.createElement('button');
+                    chip.type = 'button';
+                    chip.className = 'nw-chip';
+                    chip.title = `Add ${c.name} (${c.weight}% share, ${c.expectedReturn}% expected return)`;
+                    chip.innerHTML = `<span>${c.icon}</span> <span>${c.name.split('/')[0].trim()} (${c.weight}%)</span>`;
+                    chip.onclick = () => addNetWorthCategoryRow(c.id);
+                    freshChipsList.appendChild(chip);
+                });
+
+                const detailedItems = [];
+                nw.categories.forEach(c => {
+                    (c.items || []).forEach(it => detailedItems.push({ ...it, icon: c.icon, catId: c.id }));
+                });
+
+                detailedItems.slice(0, 4).forEach(it => {
+                    const chip = document.createElement('button');
+                    chip.type = 'button';
+                    chip.className = 'nw-chip';
+                    const weight = Number(((it.val / nw.totalAssets) * 100).toFixed(1));
+                    chip.title = `Add ${it.detail} — ${rs(it.val)} (${weight}% of assets)`;
+                    chip.innerHTML = `<span>${it.icon}</span> <span>${it.name} (${compact(it.val)})</span>`;
+                    chip.onclick = () => addInvestmentRow(it.name, weight, it.expectedReturn);
+                    freshChipsList.appendChild(chip);
+                });
+            }
+
+            if (datalist) {
+                datalist.innerHTML = '';
+                const normalized = normalizePercentages(nw.categories);
+                normalized.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c.name;
+                    opt.label = `${c.weight}% Net Worth share, ~${c.expectedReturn}% Return (${rs(c.val)})`;
+                    datalist.appendChild(opt);
+                });
+
+                nw.categories.forEach(c => {
+                    (c.items || []).forEach(it => {
+                        const opt = document.createElement('option');
+                        opt.value = it.name;
+                        const weight = Number(((it.val / nw.totalAssets) * 100).toFixed(1));
+                        opt.label = `${it.detail} — ${compact(it.val)} (${weight}%, ${it.expectedReturn}% Return)`;
+                        datalist.appendChild(opt);
+                    });
+                });
+            }
+        }
+
+        function onInvestmentTitlePicked(inputEl) {
+            const row = inputEl.closest('.invest-row');
+            if (!row) return;
+            const weightEl = row.querySelector('.weight-input');
+            const returnEl = row.querySelector('.return-input');
+            const val = inputEl.value.trim().toLowerCase();
+            if (!val) return;
+
+            const nw = getNetWorthData();
+            if (!nw) return;
+
+            const normalizedCats = normalizePercentages(nw.categories);
+
+            let matched = null;
+            for (const cat of normalizedCats) {
+                for (const item of (cat.items || [])) {
+                    const iname = item.name.toLowerCase();
+                    const idetail = (item.detail || '').toLowerCase();
+                    if (val === iname || val === idetail || (val.length > 2 && (iname.includes(val) || idetail.includes(val)))) {
+                        matched = {
+                            name: item.name,
+                            weight: Number(((item.val / nw.totalAssets) * 100).toFixed(1)),
+                            expectedReturn: item.expectedReturn
+                        };
+                        break;
+                    }
+                }
+                if (matched) break;
+            }
+
+            if (!matched) {
+                const foundCat = normalizedCats.find(c => {
+                    const cn = c.name.toLowerCase();
+                    return val === cn || cn.includes(val) ||
+                           (val === 'gold' && c.id === 'gold') ||
+                           ((val === 'car' || val === 'cars' || val === 'vehicle') && c.id === 'cars') ||
+                           ((val === 'stock' || val === 'stocks' || val === 'psx' || val === 'equity') && c.id === 'stocks') ||
+                           ((val === 'estate' || val === 'property' || val === 'real estate') && c.id === 'estates') ||
+                           ((val === 'cash' || val === 'bank' || val === 'savings') && c.id === 'cash');
+                });
+                if (foundCat) {
+                    matched = {
+                        name: foundCat.name,
+                        weight: foundCat.weight,
+                        expectedReturn: foundCat.expectedReturn
+                    };
+                }
+            }
+
+            if (matched) {
+                let changed = false;
+                if (!weightEl.value || parseFloat(weightEl.value) === 0) {
+                    weightEl.value = matched.weight || 0;
+                    changed = true;
+                }
+                if (!returnEl.value || parseFloat(returnEl.value) === 0) {
+                    returnEl.value = matched.expectedReturn !== undefined ? matched.expectedReturn : 10;
+                    changed = true;
+                }
+                if (changed) {
+                    calculate();
+                    toast(`Auto-filled split (${matched.weight}%) & return (${matched.expectedReturn}%) for ${matched.name}`, 'info');
+                }
+            }
+        }
+
+        function addNetWorthCategoryRow(catId) {
+            const nw = getNetWorthData();
+            if (!nw) return;
+            const normalized = normalizePercentages(nw.categories);
+            const cat = normalized.find(c => c.id === catId);
+            if (cat) {
+                addInvestmentRow(cat.name, cat.weight, cat.expectedReturn);
+                toast(`Added ${cat.name} (${cat.weight}%) from Net Worth Tracker`, 'info');
+            }
+        }
+
+        function autoFillAllNetWorthCategories() {
+            const nw = getNetWorthData();
+            if (!nw || !nw.categories || nw.categories.length === 0) {
+                toast('No assets found in Net Worth Tracker yet. Add your gold, stocks, car, or real estate in Net Worth Tracker first!', 'warning');
+                return;
+            }
+            const normalized = normalizePercentages(nw.categories);
+            const container = document.getElementById('investmentsContainer');
+            container.innerHTML = '';
+            normalized.forEach(c => {
+                addInvestmentRow(c.name, c.weight, c.expectedReturn);
+            });
+            calculate();
+            toast(`⚡ Auto-filled 100% portfolio split from your Net Worth (${rs(nw.totalAssets)})!`, 'success');
+        }
+
+        function autoFillAllNetWorthItems() {
+            const nw = getNetWorthData();
+            if (!nw) return;
+            const allItems = [];
+            nw.categories.forEach(c => {
+                (c.items || []).forEach(it => {
+                    if (it.val > 0) allItems.push(it);
+                });
+            });
+            if (allItems.length === 0) {
+                toast('No individual holdings found in Net Worth Tracker.', 'warning');
+                return;
+            }
+            const normalized = normalizePercentages(allItems);
+            const container = document.getElementById('investmentsContainer');
+            container.innerHTML = '';
+            normalized.forEach(it => {
+                addInvestmentRow(it.name, it.weight, it.expectedReturn);
+            });
+            calculate();
+            toast(`⚡ Auto-filled ${normalized.length} individual holdings from Net Worth!`, 'success');
+        }
+
+        function openNetWorthSuggestModal() {
+            const nw = getNetWorthData();
+            const backdrop = document.createElement('div');
+            backdrop.className = 'modal-backdrop';
+
+            if (!nw || nw.categories.length === 0) {
+                backdrop.innerHTML = `
+                    <div class="modal-box">
+                        <div style="text-align: center; padding: 12px 6px;">
+                            <div style="font-size: 2.5rem; margin-bottom: 12px;">📊</div>
+                            <div style="font-weight: 800; font-size: 1.1rem; margin-bottom: 8px; color: var(--text-main);">No Net Worth Data Found</div>
+                            <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 20px; line-height: 1.5;">
+                                Track your physical gold, cars, PSX stocks, property, and cash in the Net Worth Tracker. Once added, you can auto-fill and balance your investment portfolio here with 1 click!
+                            </p>
+                            <div class="modal-actions" style="justify-content: center; gap: 10px;">
+                                <button class="btn-action btn-secondary" onclick="this.closest('.modal-backdrop').remove()">Close</button>
+                                <a href="networth.html" class="btn-action" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                                    Open Net Worth Tracker &rarr;
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(backdrop);
+                requestAnimationFrame(() => backdrop.classList.add('show'));
+                return;
+            }
+
+            const normalizedCats = normalizePercentages(nw.categories);
+            const allItems = [];
+            nw.categories.forEach(c => {
+                (c.items || []).forEach(it => allItems.push({ ...it, icon: c.icon, catName: c.name, catId: c.id }));
+            });
+            const normalizedItems = normalizePercentages(allItems);
+
+            let catRowsHtml = normalizedCats.map(c => `
+                <tr>
+                    <td style="font-weight: 700;">
+                        <span style="margin-right: 6px;">${c.icon}</span> ${esc(c.name)}
+                        <div style="font-size: 0.7rem; color: var(--text-dim); margin-top: 2px;">${c.items.length} item(s) logged</div>
+                    </td>
+                    <td style="font-weight: 700;">${rs(c.val)}</td>
+                    <td><span class="nw-badge green">${c.weight}%</span></td>
+                    <td><span class="nw-badge gold">${c.expectedReturn}% / yr</span></td>
+                    <td style="text-align: right;">
+                        <button type="button" class="btn-add" style="padding: 4px 8px; font-size: 0.72rem;" onclick="addInvestmentRow('${esc(c.name)}', ${c.weight}, ${c.expectedReturn}); toast('Added ${esc(c.name)}', 'info');">
+                            + Add
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            let itemRowsHtml = normalizedItems.map(it => `
+                <tr>
+                    <td style="font-weight: 700;">
+                        <span style="margin-right: 6px;">${it.icon}</span> ${esc(it.name)}
+                        <div style="font-size: 0.7rem; color: var(--text-dim); margin-top: 2px;">${esc(it.detail)}</div>
+                    </td>
+                    <td style="font-weight: 700;">${rs(it.val)}</td>
+                    <td><span class="nw-badge green">${it.weight}%</span></td>
+                    <td><span class="nw-badge gold">${it.expectedReturn}% / yr</span></td>
+                    <td style="text-align: right;">
+                        <button type="button" class="btn-add" style="padding: 4px 8px; font-size: 0.72rem;" onclick="addInvestmentRow('${esc(it.name)}', ${it.weight}, ${it.expectedReturn}); toast('Added ${esc(it.name)}', 'info');">
+                            + Add
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            backdrop.innerHTML = `
+                <div class="modal-box modal-lg">
+                    <div class="nw-modal-header">
+                        <div>
+                            <div class="nw-modal-title">⚡ Net Worth Portfolio Suggestions</div>
+                            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 3px;">
+                                Total tracked assets: <strong style="color: var(--secondary);">${rs(nw.totalAssets)}</strong>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-icon" style="border: none; font-size: 1.3rem; line-height: 1; cursor: pointer; color: var(--text-dim);" onclick="this.closest('.modal-backdrop').remove()">&times;</button>
+                    </div>
+
+                    <div class="nw-modal-tabs">
+                        <button type="button" class="nw-tab-btn active" id="nwModalTabCats">📊 Asset Classes (Balanced 100%)</button>
+                        <button type="button" class="nw-tab-btn" id="nwModalTabItems">🔍 Individual Holdings (${allItems.length})</button>
+                    </div>
+
+                    <div class="nw-modal-body">
+                        <div id="nwModalViewCats">
+                            <table class="nw-table">
+                                <thead>
+                                    <tr>
+                                        <th>Asset Class</th>
+                                        <th>Valuation</th>
+                                        <th>Share</th>
+                                        <th>Benchmark Return</th>
+                                        <th style="text-align: right;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${catRowsHtml}</tbody>
+                            </table>
+                        </div>
+
+                        <div id="nwModalViewItems" style="display: none;">
+                            <table class="nw-table">
+                                <thead>
+                                    <tr>
+                                        <th>Holding Details</th>
+                                        <th>Valuation</th>
+                                        <th>Share</th>
+                                        <th>Benchmark Return</th>
+                                        <th style="text-align: right;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${itemRowsHtml}</tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions" style="justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 16px;">
+                        <span style="font-size: 0.72rem; color: var(--text-dim);">Allocations automatically normalized to 100%.</span>
+                        <div style="display: flex; gap: 8px;">
+                            <button type="button" class="btn-action btn-secondary" onclick="this.closest('.modal-backdrop').remove()">Close</button>
+                            <button type="button" class="btn-action" id="nwModalApplyBtn" style="background: var(--primary); color: #fff;">
+                                ⚡ Apply All Categories (100% Split)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(backdrop);
+            requestAnimationFrame(() => backdrop.classList.add('show'));
+
+            const tabCats = backdrop.querySelector('#nwModalTabCats');
+            const tabItems = backdrop.querySelector('#nwModalTabItems');
+            const viewCats = backdrop.querySelector('#nwModalViewCats');
+            const viewItems = backdrop.querySelector('#nwModalViewItems');
+            const applyBtn = backdrop.querySelector('#nwModalApplyBtn');
+
+            let activeTab = 'cats';
+
+            tabCats.onclick = () => {
+                activeTab = 'cats';
+                tabCats.classList.add('active');
+                tabItems.classList.remove('active');
+                viewCats.style.display = 'block';
+                viewItems.style.display = 'none';
+                applyBtn.innerHTML = '⚡ Apply All Categories (100% Split)';
+            };
+
+            tabItems.onclick = () => {
+                activeTab = 'items';
+                tabItems.classList.add('active');
+                tabCats.classList.remove('active');
+                viewCats.style.display = 'none';
+                viewItems.style.display = 'block';
+                applyBtn.innerHTML = '⚡ Apply All Holdings (100% Split)';
+            };
+
+            applyBtn.onclick = () => {
+                if (activeTab === 'cats') {
+                    autoFillAllNetWorthCategories();
+                } else {
+                    autoFillAllNetWorthItems();
+                }
+                backdrop.classList.remove('show');
+                setTimeout(() => backdrop.remove(), 200);
+            };
+
+            const close = () => {
+                backdrop.classList.remove('show');
+                setTimeout(() => backdrop.remove(), 200);
+            };
+
+            backdrop.addEventListener('click', e => { if (e.target === backdrop) close(); });
+            const onKey = e => {
+                if (e.key === 'Escape') {
+                    close();
+                    document.removeEventListener('keydown', onKey);
+                }
+            };
+            document.addEventListener('keydown', onKey);
+        }
+
+        /* ----------------------- net worth tracker sync ----------------------- */
+        function checkSyncedSavings() {
+            const h = location.hash;
+            if (h.startsWith('#savings=')) {
+                const val = parseFloat(h.replace('#savings=', ''));
+                if (Number.isFinite(val) && val >= 0) {
+                    document.getElementById('savings').value = Math.round(val);
+                    calculate();
+                    toast('Loaded starting savings from Net Worth Tracker: ' + rs(val), 'success');
+                    history.replaceState(null, '', location.pathname);
+                }
+            }
+
+            const synced = localStorage.getItem('wealth_compounder_synced_savings');
+            let val = synced ? parseFloat(synced) : 0;
+            if (!val || val <= 0) {
+                try {
+                    const rawT = localStorage.getItem('wealth_networth_totals');
+                    if (rawT) {
+                        const t = JSON.parse(rawT);
+                        val = parseFloat(t.netWorth) || parseFloat(t.totalAssets) || 0;
+                    }
+                } catch (e) {}
+            }
+
+            const badge = document.getElementById('networthNavBadge');
+            if (badge && Number.isFinite(val) && val > 0) {
+                badge.style.display = 'inline-block';
+                badge.innerText = rs(val);
+            }
+            const link = document.getElementById('syncNetWorthLink');
+            if (link && Number.isFinite(val) && val > 0) {
+                link.style.display = 'inline';
+                link.innerText = '⚡ Use Net Worth (' + compact(val) + ')';
+            }
+        }
+
+        function loadNetWorthAsSavings() {
+            const synced = localStorage.getItem('wealth_compounder_synced_savings');
+            if (synced) {
+                const val = parseFloat(synced);
+                document.getElementById('savings').value = Math.round(val);
+                calculate();
+                toast('Current savings updated from Net Worth Tracker: ' + rs(val), 'success');
+            }
+        }
+
         window.onload = () => {
             applyTheme(ld('wealth_theme') === 'light');
             document.getElementById('maskBtn').innerHTML = ICON.eye;
@@ -1878,12 +2753,19 @@
             buildSliders();
             loadFromHash();
             checkSavedStatus();
+            checkSyncedSavings();
+            renderNetWorthSuggestions();
             const wrap = document.getElementById('chartWrap');
             wrap.addEventListener('pointermove', chartHover);
             wrap.addEventListener('pointerleave', chartLeave);
             calculate();
             if (TEST_MODE) selfTest();
         };
+
+        window.addEventListener('focus', () => {
+            checkSyncedSavings();
+            renderNetWorthSuggestions();
+        });
     </script>
 </body>
 
