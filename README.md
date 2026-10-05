@@ -73,3 +73,15 @@ Everything runs in your browser — your numbers are never uploaded.
 - **Share** puts your inputs in the URL itself — great for sending a scenario
 - **Save Scenario** keeps everything local in browser storage, so nothing leaves your machine
 
+---
+
+## Run locally
+
+```bash
+cd /Users/Shared/work/WealthFlowCompounder/WealthFlowCompounder
+python3 -m http.server 8000 --bind 0.0.0.0
+```
+
+Then open your browser at:
+- **Retirement Compounder**: [http://localhost:8000](http://localhost:8000) or [http://localhost:8000/index.html](http://localhost:8000/index.html)
+- **Daily Net Worth Tracker**: [http://localhost:8000/networth.html](http://localhost:8000/networth.html)
