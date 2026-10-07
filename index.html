@@ -358,13 +358,101 @@
             padding-top: 18px;
         }
 
-        .invest-row,
+        .invest-row {
+            display: grid;
+            grid-template-columns: 1.8fr 1.2fr 0.9fr 0.9fr 40px;
+            gap: 10px;
+            margin-bottom: 10px;
+            animation: slideIn 0.3s ease-out;
+        }
+
         .goal-row {
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr 45px;
-            gap: 12px;
-            margin-bottom: 12px;
+            grid-template-columns: 2fr 1fr 1fr 40px;
+            gap: 10px;
+            margin-bottom: 10px;
             animation: slideIn 0.3s ease-out;
+        }
+
+        .invest-header-row {
+            display: grid;
+            grid-template-columns: 1.8fr 1.2fr 0.9fr 0.9fr 40px;
+            gap: 10px;
+            padding: 0 4px 6px;
+            font-size: 0.68rem;
+            font-weight: 800;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .goal-header-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 40px;
+            gap: 10px;
+            padding: 0 4px 6px;
+            font-size: 0.68rem;
+            font-weight: 800;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .future-invest-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 40px;
+            gap: 10px;
+            margin-bottom: 10px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .future-header-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 40px;
+            gap: 10px;
+            padding: 0 4px 6px;
+            font-size: 0.68rem;
+            font-weight: 800;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .portfolio-card-section {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 18px;
+            transition: border-color 0.2s ease;
+        }
+
+        .portfolio-card-section:focus-within {
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        .pill-badge {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        @media (max-width: 600px) {
+            .invest-row,
+            .invest-header-row {
+                grid-template-columns: 1.4fr 1.1fr 0.8fr 0.8fr 34px !important;
+                gap: 6px !important;
+            }
+            .goal-row,
+            .goal-header-row,
+            .future-invest-row,
+            .future-header-row {
+                grid-template-columns: 1.5fr 1fr 1fr 34px !important;
+                gap: 6px !important;
+            }
         }
 
         @keyframes slideIn {
@@ -1052,36 +1140,100 @@
                         id="inflation" min="0" value="0"></div>
             </div>
 
-            <div class="section-title space-out">
-                <span>INVESTMENT PORTFOLIO SPLIT</span>
-                <div style="display: flex; gap: 8px; align-items: center;">
-                    <button type="button" class="btn-add" id="networthSuggestBtn" style="display: none; border-color: var(--secondary); color: var(--secondary); font-size: 0.72rem; padding: 4px 10px;" onclick="openNetWorthSuggestModal()" title="Auto-fill suggestions from your Net Worth Tracker">
-                        ⚡ From Net Worth
-                    </button>
-                    <button class="btn-add" onclick="addInvestmentRow('', '', '')">+ Add Asset/Fund</button>
+            <!-- 1. CURRENT ASSETS PORTFOLIO -->
+            <div class="portfolio-card-section" style="margin-top: 18px;">
+                <div class="section-title" style="margin: 0 0 8px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 0.92rem; font-weight: 800; color: var(--text-main);">🏛️ CURRENT ASSETS SPLIT</span>
+                        <span class="pill-badge" id="existingReturnBadge" style="background: rgba(52, 211, 153, 0.15); color: #34d399;">0% Return</span>
+                    </div>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <button type="button" class="btn-add" id="networthSuggestBtn" style="display: none; border-color: var(--secondary); color: var(--secondary); font-size: 0.72rem; padding: 4px 10px;" onclick="openNetWorthSuggestModal()" title="Auto-fill suggestions from your Net Worth Tracker">
+                            ⚡ From Net Worth
+                        </button>
+                        <button class="btn-add" onclick="addInvestmentRow('', '', '', '')">+ Add Asset</button>
+                    </div>
                 </div>
+                <div style="font-size: 0.74rem; color: var(--text-dim); margin-bottom: 10px;">
+                    How your starting savings (<strong id="currentSavingsDisplay" style="color: var(--text-main);">Rs. 0</strong>) are currently allocated across real estate, gold, stocks, funds, vehicles &amp; cash.
+                </div>
+
+                <!-- Quick Suggestions Strip from Net Worth Tracker -->
+                <div id="networthQuickChips" style="display: none; margin-bottom: 12px; padding: 10px 12px; background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 12px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: var(--primary); letter-spacing: 0.06em; display: flex; align-items: center; gap: 5px;">
+                            💡 Net Worth Suggestions
+                        </span>
+                        <button type="button" onclick="autoFillAllNetWorthCategories()" style="font-size: 0.72rem; font-weight: 800; color: var(--secondary); cursor: pointer; background: none; border: none; padding: 0;" title="Auto-fill 100% split based on your actual net worth">
+                            ⚡ Auto-Fill All (100% Split)
+                        </button>
+                    </div>
+                    <div id="networthChipsList" style="display: flex; flex-wrap: wrap; gap: 6px;"></div>
+                </div>
+
+                <!-- Column Header for Investment Rows -->
+                <div class="invest-header-row" id="investHeaderRow" style="display: none;">
+                    <span>Fund / Asset Name</span>
+                    <span>Amount (Rs.)</span>
+                    <span>% Split</span>
+                    <span>% Return</span>
+                    <span></span>
+                </div>
+                <div id="investmentsContainer"></div>
+                <datalist id="networthAssetDatalist"></datalist>
+                <div id="weightWarning" class="warning">⚠️ Current Assets split should equal 100% for better results.</div>
             </div>
 
-            <!-- Quick Suggestions Strip from Net Worth Tracker -->
-            <div id="networthQuickChips" style="display: none; margin-bottom: 12px; padding: 10px 12px; background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 12px;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                    <span style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: var(--primary); letter-spacing: 0.06em; display: flex; align-items: center; gap: 5px;">
-                        💡 Net Worth Suggestions
-                    </span>
-                    <button type="button" onclick="autoFillAllNetWorthCategories()" style="font-size: 0.72rem; font-weight: 800; color: var(--secondary); cursor: pointer; background: none; border: none; padding: 0;" title="Auto-fill 100% split based on your actual net worth">
-                        ⚡ Auto-Fill All (100% Split)
-                    </button>
+            <!-- 2. FUTURE MONTHLY INFLOWS PORTFOLIO -->
+            <div class="portfolio-card-section" id="futureInflowsSection">
+                <div class="section-title" style="margin: 0 0 8px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 0.92rem; font-weight: 800; color: var(--text-main);">🌱 FUTURE MONTHLY INFLOWS</span>
+                        <span class="pill-badge" id="futureReturnBadge" style="background: rgba(129, 140, 248, 0.15); color: #818cf8;">0% Return</span>
+                    </div>
+                    <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.76rem; color: var(--text-dim); cursor: pointer; user-select: none; background: rgba(255,255,255,0.04); padding: 4px 10px; border-radius: 8px; border: 1px solid var(--border);">
+                        <input type="checkbox" id="mirrorFutureSplitToggle" checked onchange="onMirrorFutureSplitChanged()">
+                        <span>Mirror Current Assets Split</span>
+                    </label>
                 </div>
-                <div id="networthChipsList" style="display: flex; flex-wrap: wrap; gap: 6px;"></div>
-            </div>
 
-            <div id="investmentsContainer"></div>
-            <datalist id="networthAssetDatalist"></datalist>
-            <div id="weightWarning" class="warning">⚠️ Total Split should equal 100% for better results.</div>
+                <div id="futureMirrorBanner" style="font-size: 0.76rem; color: var(--text-dim); padding: 9px 12px; background: rgba(255,255,255,0.03); border: 1px dashed var(--border); border-radius: 10px; line-height: 1.5;">
+                    🔗 <strong>Mirroring Current Split:</strong> All monthly salary savings (<span id="mirrorMonthlyAmountText" style="color: var(--secondary); font-weight: 700;">Rs. 0 / mo</span>) follow the exact same asset split as your current net worth. <a href="javascript:void(0)" onclick="unlockFutureSplit()" style="color: var(--primary); font-weight: 700; text-decoration: none;">Customize Monthly SIP Strategy &rarr;</a>
+                </div>
+
+                <div id="futureCustomPanel" style="display: none; margin-top: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+                        <div style="font-size: 0.74rem; color: var(--text-dim);">
+                            Where monthly salary savings (<strong id="customMonthlyAmountText" style="color: var(--secondary);">Rs. 0 / mo</strong>) will be invested:
+                        </div>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                            <button type="button" class="btn-add" style="font-size: 0.7rem; padding: 3px 8px;" onclick="applyFuturePreset('equities')">⚡ 100% Equities (15%)</button>
+                            <button type="button" class="btn-add" style="font-size: 0.7rem; padding: 3px 8px;" onclick="applyFuturePreset('5050')">⚡ 50/50 Stocks &amp; KMIF (14.5%)</button>
+                            <button type="button" class="btn-add" style="font-size: 0.7rem; padding: 3px 8px;" onclick="addFutureInvestmentRow('', '', '')">+ Add Inflow Asset</button>
+                        </div>
+                    </div>
+
+                    <div class="future-header-row" id="futureHeaderRow" style="display: none;">
+                        <span>Asset / Fund Name</span>
+                        <span>% Split</span>
+                        <span>% Return</span>
+                        <span></span>
+                    </div>
+                    <div id="futureInvestmentsContainer"></div>
+                    <div id="futureWeightWarning" class="warning">⚠️ Monthly Inflow split should equal 100%.</div>
+                </div>
+            </div>
 
             <div class="section-title space-out">
                 LIFE GOALS &amp; BIG EXPENSES
                 <button class="btn-add" onclick="addGoalRow('', '', '')">+ Add Goal</button>
+            </div>
+            <!-- Column Header for Goal Rows -->
+            <div class="goal-header-row" id="goalHeaderRow" style="display: none;">
+                <span>Goal / Expense Name</span>
+                <span>At Age</span>
+                <span>Cost Today (Rs.)</span>
+                <span></span>
             </div>
             <div id="goalsContainer"></div>
             <p class="hint">Costs are in <strong>today's</strong> prices, inflated to the age you set. A negative
@@ -1112,6 +1264,22 @@
                 </div>
             </div>
 
+            <!-- Dual Growth Breakdown Card -->
+            <div id="dualGrowthCard" style="display: flex; flex-direction: column; gap: 6px; margin: 12px 0 16px; padding: 10px 14px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; font-size: 0.78rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--text-dim); display: flex; align-items: center; gap: 6px;">
+                        <span>🏛️</span> Current Assets Growth (<span id="badgeExistingRet" style="color: #34d399; font-weight: 700;">0%</span>):
+                    </span>
+                    <strong id="dualExistingGrew" style="color: #34d399;">Rs. 0</strong>
+                </div>
+                <div id="dualFutureRow" style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--text-dim); display: flex; align-items: center; gap: 6px;">
+                        <span>🌱</span> Monthly Inflows Growth (<span id="badgeFutureRet" style="color: #818cf8; font-weight: 700;">0%</span>):
+                    </span>
+                    <strong id="dualFutureGrew" style="color: #818cf8;">Rs. 0</strong>
+                </div>
+            </div>
+
             <div class="pill-group first">In today's money</div>
             <div class="currency-pill"><span class="pill-label">Income /mo @ 4%</span><span
                     class="pill-value" id="resIncome">Rs. 0</span></div>
@@ -1124,7 +1292,11 @@
             <div class="currency-pill"><span class="pill-label">Final Year Salary <span
                         style="opacity:.6">(future rupees)</span></span><span class="pill-value"
                     id="resFinalSalary">Rs. 0</span></div>
-            <div class="currency-pill"><span class="pill-label">Avg. Weighted Return</span><span class="pill-value"
+            <div class="currency-pill"><span class="pill-label">Current Assets Return</span><span class="pill-value"
+                    id="resExistingReturn">0%</span></div>
+            <div class="currency-pill" id="resFutureReturnRow" style="display:none;"><span class="pill-label">Monthly Inflow Return</span><span class="pill-value"
+                    id="resFutureReturn">0%</span></div>
+            <div class="currency-pill"><span class="pill-label">Blended Avg. Return</span><span class="pill-value"
                     id="resReturn">0%</span></div>
             <div class="currency-pill"><span class="pill-label">Working Horizon</span><span class="pill-value"
                     id="resYears">0 Years</span></div>
@@ -1360,8 +1532,11 @@
         // Contributions are driven by the rupee amount, not the 1-decimal percent:
         // 13.3% of a 250k salary is Rs.83/mo away from the 33,333 the user typed,
         // which compounds into a six-figure gap over a career.
-        function project({ savings, monthlyInvest, raise, years, annualReturn, inflation, goals }) {
-            const monthlyRet = Math.pow(1 + Math.max(annualReturn, -0.99), 1 / 12) - 1;
+        function project({ savings, existingReturn, annualReturn, monthlyInvest, futureReturn, raise, years, inflation, goals }) {
+            const eRet = existingReturn !== undefined ? existingReturn : (annualReturn !== undefined ? annualReturn : 0);
+            const fRet = futureReturn !== undefined ? futureReturn : eRet;
+            const monthlyExistingRet = Math.pow(1 + Math.max(eRet, -0.99), 1 / 12) - 1;
+            const monthlyFutureRet = Math.pow(1 + Math.max(fRet, -0.99), 1 / 12) - 1;
             const infl = Math.max(inflation || 0, -0.99);
             const totalMonths = years * 12;
 
@@ -1375,34 +1550,60 @@
                 return { ...g, month, cost, inRange };
             });
 
-            let wealth = savings, contributed = savings, spent = 0, earned = 0, unfunded = 0;
+            let wealthExisting = savings || 0, wealthFuture = 0;
+            let contributed = savings || 0, spent = 0, earned = 0, unfunded = 0;
             let firstShort = null;
             const wealthSeries = [], netSeries = [];
             const shortByMonth = {};
 
             for (let idx = 0; idx <= totalMonths; idx++) {
                 if (due[idx]) {
-                    const take = Math.min(due[idx], Math.max(wealth, 0));
-                    const short = due[idx] - take;
-                    wealth -= take;
-                    spent += take;
-                    if (short > 1e-6) {
-                        unfunded += short;
-                        shortByMonth[idx] = short;
-                        if (firstShort === null) firstShort = idx;
+                    if (due[idx] < 0) {
+                        // Negative goal is an inflow (bonus, inheritance, sale of asset)
+                        wealthFuture -= due[idx]; // subtracting negative adds to wealth
+                        spent += due[idx];
+                    } else {
+                        const totalAvailable = Math.max(0, wealthExisting) + Math.max(0, wealthFuture);
+                        const take = Math.min(due[idx], totalAvailable);
+                        const short = due[idx] - take;
+
+                        let remTake = take;
+                        if (wealthFuture > 0) {
+                            const takeF = Math.min(wealthFuture, remTake);
+                            wealthFuture -= takeF;
+                            remTake -= takeF;
+                        }
+                        if (remTake > 0 && wealthExisting > 0) {
+                            const takeE = Math.min(wealthExisting, remTake);
+                            wealthExisting -= takeE;
+                            remTake -= takeE;
+                        }
+
+                        spent += take;
+                        if (short > 1e-6) {
+                            unfunded += short;
+                            shortByMonth[idx] = short;
+                            if (firstShort === null) firstShort = idx;
+                        }
                     }
                 }
+
+                const currentWealth = wealthExisting + wealthFuture;
                 if (idx % 12 === 0) {
-                    wealthSeries.push(wealth);
+                    wealthSeries.push(currentWealth);
                     netSeries.push(contributed - spent);
                 }
                 if (idx === totalMonths) break;
-                // pow, not repeated multiplication: no drift accumulated over 400+ months
-                const invest = monthlyInvest * Math.pow(1 + raise, Math.floor(idx / 12));
+
+                const invest = (monthlyInvest || 0) * Math.pow(1 + (raise || 0), Math.floor(idx / 12));
                 contributed += invest;
-                const g = (wealth + invest) * monthlyRet;
-                earned += g;
-                wealth = wealth + invest + g;
+                wealthFuture += invest;
+
+                const gE = wealthExisting * monthlyExistingRet;
+                const gF = wealthFuture * monthlyFutureRet;
+                earned += (gE + gF);
+                wealthExisting += gE;
+                wealthFuture += gF;
             }
 
             // split each goal's shortfall back onto it, so the UI can name what could not be covered
@@ -1415,10 +1616,17 @@
             });
 
             return {
-                wealth, contributed, spent, priced, unfunded,
+                wealth: wealthExisting + wealthFuture,
+                wealthExisting,
+                wealthFuture,
+                contributed,
+                spent,
+                priced,
+                unfunded,
                 shortfallMonth: firstShort,
                 growth: earned,     // exact identity: wealth = contributed + growth - spent
-                wealthSeries, netSeries
+                wealthSeries,
+                netSeries
             };
         }
 
@@ -1494,18 +1702,198 @@
             const btn = document.createElement('button');
             btn.className = 'btn-remove';
             btn.innerHTML = '&times;';
-            btn.onclick = () => { row.remove(); calculate(); };
+            btn.onclick = () => {
+                const isInvest = row.classList.contains('invest-row') && !row.classList.contains('goal-row');
+                row.remove();
+                if (isInvest) syncInvestmentAmountToSplit();
+                calculate();
+            };
             row.appendChild(btn);
             document.getElementById(container).appendChild(row);
             calculate();
         }
 
-        function addInvestmentRow(name = '', split = '', ret = '') {
+        let isSyncingInvestment = false;
+        let lastKnownPortfolioBase = 0;
+
+        function getPortfolioBaseAmount() {
+            if (lastKnownPortfolioBase > 0) return lastKnownPortfolioBase;
+
+            let sumAmounts = 0;
+            document.querySelectorAll('.invest-row:not(.goal-row)').forEach(r => {
+                const a = parseFloat(r.querySelector('.amount-input')?.value);
+                if (Number.isFinite(a) && a > 0) sumAmounts += a;
+            });
+            if (sumAmounts > 0) return sumAmounts;
+
+            const investVal = parseFloat(document.getElementById('investVal')?.value) || 0;
+            if (investVal > 0) return investVal;
+
+            const savings = parseFloat(document.getElementById('savings')?.value) || 0;
+            if (savings > 0) return savings;
+
+            return 100000;
+        }
+
+        function syncInvestmentAmountToSplit() {
+            if (isSyncingInvestment) return;
+            isSyncingInvestment = true;
+            try {
+                const rows = [...document.querySelectorAll('.invest-row:not(.goal-row)')];
+                if (rows.length === 0) return;
+
+                let totalAmount = 0;
+                let countWithAmount = 0;
+                rows.forEach(r => {
+                    const val = parseFloat(r.querySelector('.amount-input')?.value);
+                    if (Number.isFinite(val) && val > 0) {
+                        totalAmount += val;
+                        countWithAmount++;
+                    }
+                });
+
+                if (totalAmount > 0) {
+                    lastKnownPortfolioBase = totalAmount;
+                    const investVal = parseFloat(document.getElementById('investVal')?.value) || 0;
+                    // If total amounts match or are within monthly investment, base is investVal
+                    // Otherwise, base is the sum of row amounts (e.g. portfolio breakdown)
+                    const base = (investVal > 0 && totalAmount <= investVal * 1.05) ? investVal : totalAmount;
+
+                    let assignedTotal = 0;
+                    let maxWeightEl = null;
+                    let maxAmt = -1;
+
+                    rows.forEach(r => {
+                        const amtEl = r.querySelector('.amount-input');
+                        const weightEl = r.querySelector('.weight-input');
+                        const amt = parseFloat(amtEl?.value);
+                        if (Number.isFinite(amt) && amt > 0) {
+                            const rawPct = (amt / base) * 100;
+                            const pct = Math.round(rawPct * 10) / 10;
+                            if (weightEl) weightEl.value = pct;
+                            assignedTotal += pct;
+                            if (amt > maxAmt) {
+                                maxAmt = amt;
+                                maxWeightEl = weightEl;
+                            }
+                        } else if (weightEl && amtEl && amtEl.value === '') {
+                            weightEl.value = '';
+                        }
+                    });
+
+                    // Ensure rounding variance doesn't prevent summing to 100%
+                    if (base === totalAmount && countWithAmount === rows.length && maxWeightEl) {
+                        const diff = Math.round((100.0 - assignedTotal) * 10) / 10;
+                        if (Math.abs(diff) > 0 && Math.abs(diff) <= 0.5) {
+                            maxWeightEl.value = (parseFloat(maxWeightEl.value) + diff).toFixed(1);
+                        }
+                    }
+                }
+            } finally {
+                isSyncingInvestment = false;
+            }
+        }
+
+        function syncInvestmentSplitToAmount(targetInput) {
+            if (isSyncingInvestment) return;
+            isSyncingInvestment = true;
+            try {
+                const rows = [...document.querySelectorAll('.invest-row:not(.goal-row)')];
+                if (rows.length === 0) return;
+
+                const base = getPortfolioBaseAmount();
+                lastKnownPortfolioBase = base;
+
+                const targetRow = targetInput ? targetInput.closest('.invest-row') : null;
+                const rowsToSync = targetRow ? [targetRow] : rows;
+
+                rowsToSync.forEach(r => {
+                    const weightEl = r.querySelector('.weight-input');
+                    const amtEl = r.querySelector('.amount-input');
+                    if (!amtEl || !weightEl) return;
+
+                    const w = parseFloat(weightEl.value);
+                    if (Number.isFinite(w) && w >= 0) {
+                        amtEl.value = Math.round(base * (w / 100));
+                    } else if (weightEl.value === '') {
+                        amtEl.value = '';
+                    }
+                });
+            } finally {
+                isSyncingInvestment = false;
+            }
+        }
+
+        function addInvestmentRow(name = '', arg1 = '', arg2 = '', arg3 = undefined) {
+            let amount = '', split = '', ret = '';
+            if (arg3 !== undefined) {
+                amount = arg1;
+                split = arg2;
+                ret = arg3;
+            } else {
+                split = arg1;
+                ret = arg2 !== undefined ? arg2 : '';
+            }
+
             makeRow('invest-row', 'investmentsContainer', [
                 { type: 'text', cls: 'title-input', ph: 'Fund/Asset Name', val: name, list: 'networthAssetDatalist' },
+                { type: 'number', cls: 'amount-input sensitive', ph: 'Amount (Rs.)', val: amount, min: 0 },
                 { type: 'number', cls: 'weight-input', ph: '% Split', val: split, min: 0 },
                 { type: 'number', cls: 'return-input', ph: '% Return', val: ret }
             ]);
+        }
+
+        function addFutureInvestmentRow(name = '', split = '', ret = '') {
+            makeRow('invest-row future-invest-row', 'futureInvestmentsContainer', [
+                { type: 'text', cls: 'title-input', ph: 'Asset/Fund Name (e.g. KMIF, PSX)', val: name, list: 'networthAssetDatalist' },
+                { type: 'number', cls: 'weight-input', ph: '% Split', val: split, min: 0 },
+                { type: 'number', cls: 'return-input', ph: '% Return', val: ret }
+            ]);
+        }
+
+        function onMirrorFutureSplitChanged() {
+            const mirror = document.getElementById('mirrorFutureSplitToggle')?.checked;
+            const banner = document.getElementById('futureMirrorBanner');
+            const panel = document.getElementById('futureCustomPanel');
+            if (banner) banner.style.display = mirror ? 'block' : 'none';
+            if (panel) panel.style.display = mirror ? 'none' : 'block';
+
+            if (!mirror) {
+                const rows = document.querySelectorAll('#futureInvestmentsContainer .future-invest-row');
+                if (rows.length === 0) {
+                    applyFuturePreset('5050');
+                    return;
+                }
+            }
+            calculate();
+        }
+
+        function unlockFutureSplit() {
+            const toggle = document.getElementById('mirrorFutureSplitToggle');
+            if (toggle) {
+                toggle.checked = false;
+                onMirrorFutureSplitChanged();
+            }
+        }
+
+        function applyFuturePreset(preset) {
+            const container = document.getElementById('futureInvestmentsContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            if (preset === 'equities') {
+                addFutureInvestmentRow('PSX Equities / Stocks', 100, 15);
+                toast('Applied 100% PSX Equities preset (15% return) for monthly inflows', 'info');
+            } else if (preset === '5050') {
+                addFutureInvestmentRow('PSX Equities / Stocks', 50, 15);
+                addFutureInvestmentRow('KMIF — Meezan Islamic Fund', 50, 14);
+                toast('Applied 50% Stocks + 50% KMIF preset (14.5% return)', 'info');
+            } else if (preset === 'balanced') {
+                addFutureInvestmentRow('PSX Equities / Stocks', 40, 15);
+                addFutureInvestmentRow('KMIF — Meezan Islamic Fund', 40, 14);
+                addFutureInvestmentRow('Physical Gold & Bullion', 20, 12);
+                toast('Applied Balanced Shariah preset (14.0% return)', 'info');
+            }
+            calculate();
         }
 
         function addGoalRow(name = '', at = '', amount = '') {
@@ -1516,10 +1904,15 @@
             ]);
         }
 
-        // One delegated listener covers every current and future row — no per-input
-        // binding to redo each time addInvestmentRow/addGoalRow creates one.
+        // Delegated listener covers every current and future row
         document.addEventListener('input', e => {
-            if (e.target.matches('input:not([type=range])')) calculate();
+            const el = e.target;
+            if (el.matches('.amount-input')) {
+                syncInvestmentAmountToSplit();
+            } else if (el.matches('.weight-input') && el.closest('#investmentsContainer')) {
+                syncInvestmentSplitToAmount(el);
+            }
+            if (el.matches('input:not([type=range])')) calculate();
         });
 
         // min="0" bounds the spinner but not typing. Clamp on commit rather than on every
@@ -1528,6 +1921,14 @@
             const el = e.target;
             if (el.matches && el.matches('input[type=number][min="0"]') && parseFloat(el.value) < 0) {
                 el.value = 0;
+                calculate();
+            }
+            if (el.matches && el.matches('.amount-input')) {
+                syncInvestmentAmountToSplit();
+                calculate();
+            }
+            if (el.matches && el.matches('.weight-input') && el.closest('#investmentsContainer')) {
+                syncInvestmentSplitToAmount(el);
                 calculate();
             }
             if (el.matches && el.matches('.title-input')) {
@@ -1585,17 +1986,73 @@
             // to invest out of, so a stale Invest Value can't outspend an edited-down salary.
             const monthlyInvest = salary > 0 ? Math.min(num('investVal'), salary) : num('investVal');
 
-            let totalWeight = 0, weightedReturn = 0;
-            const assets = [];
-            document.querySelectorAll('.invest-row:not(.goal-row)').forEach(row => {
+            // Dynamic badges in card headers
+            const savingsDisplay = document.getElementById('currentSavingsDisplay');
+            if (savingsDisplay) savingsDisplay.innerText = rs(savings);
+            const mirrorAmt = document.getElementById('mirrorMonthlyAmountText');
+            if (mirrorAmt) mirrorAmt.innerText = rs(monthlyInvest) + ' / mo';
+            const customAmt = document.getElementById('customMonthlyAmountText');
+            if (customAmt) customAmt.innerText = rs(monthlyInvest) + ' / mo';
+
+            // 1. Current Assets Portfolio (Existing Wealth)
+            let totalExistingWeight = 0, existingReturn = 0;
+            const existingAssets = [];
+            const investRows = document.querySelectorAll('#investmentsContainer .invest-row');
+            const investHeader = document.getElementById('investHeaderRow');
+            if (investHeader) {
+                investHeader.style.display = investRows.length > 0 ? 'grid' : 'none';
+            }
+
+            investRows.forEach(row => {
                 const w = parseFloat(row.querySelector('.weight-input').value) || 0;
                 const r = parseFloat(row.querySelector('.return-input').value) || 0;
-                totalWeight += w;
-                weightedReturn += (w / 100) * (r / 100);
-                assets.push({ name: row.querySelector('.title-input').value || 'Unnamed Asset', weight: w });
+                const a = parseFloat(row.querySelector('.amount-input')?.value) || 0;
+                totalExistingWeight += w;
+                existingReturn += (w / 100) * (r / 100);
+                existingAssets.push({
+                    name: row.querySelector('.title-input').value || 'Unnamed Asset',
+                    weight: w,
+                    ret: r / 100,
+                    amount: a
+                });
             });
             document.getElementById('weightWarning').style.display =
-                (assets.length > 0 && Math.abs(totalWeight - 100) > 1e-9) ? 'block' : 'none';
+                (existingAssets.length > 0 && Math.abs(totalExistingWeight - 100) > 0.05) ? 'block' : 'none';
+
+            const existingBadge = document.getElementById('existingReturnBadge');
+            if (existingBadge) existingBadge.innerText = (existingReturn * 100).toFixed(1) + '% Return';
+
+            // 2. Future Monthly Inflows Portfolio (New Salary Savings)
+            const isMirrored = document.getElementById('mirrorFutureSplitToggle')?.checked;
+            let futureReturn = existingReturn;
+            let totalFutureWeight = 100;
+            const futureAssets = [];
+
+            const futureHeader = document.getElementById('futureHeaderRow');
+            const futureRows = document.querySelectorAll('#futureInvestmentsContainer .future-invest-row');
+            if (futureHeader) {
+                futureHeader.style.display = futureRows.length > 0 ? 'grid' : 'none';
+            }
+
+            if (!isMirrored) {
+                let fWeight = 0, fRet = 0;
+                futureRows.forEach(row => {
+                    const w = parseFloat(row.querySelector('.weight-input').value) || 0;
+                    const r = parseFloat(row.querySelector('.return-input').value) || 0;
+                    fWeight += w;
+                    fRet += (w / 100) * (r / 100);
+                    futureAssets.push({ name: row.querySelector('.title-input').value || 'Unnamed Asset', weight: w });
+                });
+                totalFutureWeight = fWeight;
+                futureReturn = fRet;
+                const futureWarning = document.getElementById('futureWeightWarning');
+                if (futureWarning) {
+                    futureWarning.style.display = (futureAssets.length > 0 && Math.abs(totalFutureWeight - 100) > 0.05) ? 'block' : 'none';
+                }
+            }
+
+            const futureBadge = document.getElementById('futureReturnBadge');
+            if (futureBadge) futureBadge.innerText = (futureReturn * 100).toFixed(1) + '% Return';
 
             const years = retireAge - age;
             if (years <= 0) return blankOutputs('Retire age must be above current age');
@@ -1608,7 +2065,17 @@
                 amount: parseFloat(row.querySelector('.goal-amt').value) || 0
             })).filter(g => Number.isFinite(g.age));
 
-            const p = project({ savings, monthlyInvest, raise, years, annualReturn: weightedReturn, inflation, goals });
+            const p = project({
+                savings,
+                existingReturn,
+                monthlyInvest,
+                futureReturn,
+                raise,
+                years,
+                inflation,
+                goals
+            });
+
             const deflator = Math.pow(1 + inflation, years);
             const real = p.wealth / deflator;
             const finalSalary = salary * Math.pow(1 + raise, Math.max(0, years - 1));  // last year actually worked
@@ -1621,13 +2088,33 @@
             set('mGoals', rs(p.spent));
             document.getElementById('mGoalsCell').hidden = !(p.spent > 0);
 
+            // Dual Growth Card outputs
+            const dualExistingEl = document.getElementById('dualExistingGrew');
+            if (dualExistingEl) dualExistingEl.innerText = rs(p.wealthExisting);
+            const dualFutureEl = document.getElementById('dualFutureGrew');
+            if (dualFutureEl) dualFutureEl.innerText = rs(p.wealthFuture);
+            const badgeExistingRet = document.getElementById('badgeExistingRet');
+            if (badgeExistingRet) badgeExistingRet.innerText = (existingReturn * 100).toFixed(1) + '%';
+            const badgeFutureRet = document.getElementById('badgeFutureRet');
+            if (badgeFutureRet) badgeFutureRet.innerText = (futureReturn * 100).toFixed(1) + '%';
+            const dualFutureRow = document.getElementById('dualFutureRow');
+            if (dualFutureRow) dualFutureRow.style.display = monthlyInvest > 0 ? 'flex' : 'none';
+
             set('resIncome', rs(real * WITHDRAW / 12));
             // Today's rates belong on today's money. Applying them to a 35-year-out nominal
             // rupee figure overstated the USD number ~15x.
             set('resUSD', usd > 0 ? '$' + full(real / usd) : '—');
             set('resGold', gold > 0 ? full(real / gold) + ' tola' : '—');
             set('resFinalSalary', rs(finalSalary));
-            set('resReturn', (weightedReturn * 100).toFixed(1) + '%');
+
+            // Blended weighted return across total portfolio
+            const totalContributed = p.contributed || (savings + 1);
+            const blendedReturn = (savings * existingReturn + (p.contributed - savings) * futureReturn) / Math.max(1, totalContributed);
+            set('resExistingReturn', (existingReturn * 100).toFixed(1) + '%');
+            set('resFutureReturn', (futureReturn * 100).toFixed(1) + '%');
+            const futureRetRow = document.getElementById('resFutureReturnRow');
+            if (futureRetRow) futureRetRow.style.display = (!isMirrored && monthlyInvest > 0) ? 'flex' : 'none';
+            set('resReturn', (blendedReturn * 100).toFixed(1) + '%');
             set('resYears', years + ' Yrs');
 
             const defl = a => a.map((v, i) => v / Math.pow(1 + inflation, i));
@@ -1661,18 +2148,88 @@
                     + ' — short by ' + rs(p.unfunded) + ' on the day. Push it later, trim it, or invest more.';
             } else sw.style.display = 'none';
 
-            // Portfolio distribution
+            // Portfolio distribution: compute true asset-by-asset final value from individual compounding & inflow splits
             const distList = document.getElementById('distList');
-            if (assets.length > 0) {
+            if (existingAssets.length > 0 || futureAssets.length > 0) {
                 distList.innerHTML = '';
-                const rowsOut = assets.slice();
-                if (totalWeight < 100) rowsOut.push({ name: 'Cash', weight: 100 - totalWeight, dim: true });
-                rowsOut.forEach(asset => {
+
+                // 1. Existing assets future values (each asset compounds at its own return)
+                // Non-growth / fixed assets (ret <= 0, like vehicles at 0%) retain their nominal starting value,
+                // while compound growth is distributed across positive-yield assets.
+                let fixedSum = 0;
+                let sumCompoundedGrowth = 0;
+                const existingFVList = existingAssets.map(a => {
+                    const amt = a.amount > 0 ? a.amount : (savings * (a.weight / 100));
+                    const ret = Math.max(a.ret, -0.99);
+                    const fv = amt * Math.pow(1 + ret, years);
+                    if (ret <= 0) {
+                        fixedSum += fv;
+                    } else {
+                        sumCompoundedGrowth += fv;
+                    }
+                    return { name: a.name, fv, isFixed: ret <= 0 };
+                });
+
+                const growthPool = Math.max(0, p.wealthExisting - fixedSum);
+                const scaleGrowth = sumCompoundedGrowth > 0 ? (growthPool / sumCompoundedGrowth) : 1;
+                const categoryTotals = {};
+
+                existingFVList.forEach(item => {
+                    const key = item.name || 'Unnamed Asset';
+                    const finalVal = item.isFixed ? item.fv : (item.fv * scaleGrowth);
+                    categoryTotals[key] = (categoryTotals[key] || 0) + finalVal;
+                });
+
+                // 2. Future Monthly Inflows Distribution
+                if (p.wealthFuture > 0) {
+                    if (isMirrored) {
+                        existingAssets.forEach(a => {
+                            const key = a.name || 'Unnamed Asset';
+                            const share = (a.weight / 100) * p.wealthFuture;
+                            categoryTotals[key] = (categoryTotals[key] || 0) + share;
+                        });
+                    } else {
+                        futureRows.forEach(row => {
+                            const name = (row.querySelector('.title-input').value || 'Unnamed Asset').trim();
+                            const w = parseFloat(row.querySelector('.weight-input').value) || 0;
+                            if (w <= 0) return;
+
+                            let targetKey = name;
+                            for (const existingKey of Object.keys(categoryTotals)) {
+                                const lExisting = existingKey.toLowerCase();
+                                const lName = name.toLowerCase();
+                                const isMatch = lExisting === lName ||
+                                    (lName.length > 3 && (lExisting.includes(lName) || lName.includes(lExisting))) ||
+                                    ((lExisting.includes('fund') || lExisting.includes('mutual')) && (lName.includes('fund') || lName.includes('kmif') || lName.includes('mif') || lName.includes('mutual'))) ||
+                                    (lExisting.includes('gold') && lName.includes('gold')) ||
+                                    ((lExisting.includes('stock') || lExisting.includes('equit') || lExisting.includes('psx')) && (lName.includes('stock') || lName.includes('equit') || lName.includes('psx')));
+                                if (isMatch) {
+                                    targetKey = existingKey;
+                                    break;
+                                }
+                            }
+                            const share = (w / 100) * p.wealthFuture;
+                            categoryTotals[targetKey] = (categoryTotals[targetKey] || 0) + share;
+                        });
+                    }
+                }
+
+                // Render sorted list of true final holdings
+                const items = Object.entries(categoryTotals)
+                    .map(([name, val]) => ({
+                        name,
+                        val: Math.max(0, val),
+                        weight: p.wealth > 0 ? Number(((val / p.wealth) * 100).toFixed(1)) : 0
+                    }))
+                    .filter(i => i.val > 0)
+                    .sort((a, b) => b.val - a.val);
+
+                items.forEach(asset => {
                     const row = document.createElement('div');
                     row.className = 'currency-pill';
-                    row.style.cssText = 'padding:8px 0;font-size:0.8rem;' + (asset.dim ? 'opacity:.7;' : '');
-                    row.innerHTML = '<span class="pill-label">' + esc(asset.name) + ' - ' + +asset.weight.toFixed(2) + '%</span>'
-                        + '<span class="pill-value">' + rs(p.wealth * asset.weight / 100) + '</span>';
+                    row.style.cssText = 'padding:8px 0;font-size:0.8rem;';
+                    row.innerHTML = '<span class="pill-label">' + esc(asset.name) + ' - ' + asset.weight + '%</span>'
+                        + '<span class="pill-value">' + rs(asset.val) + '</span>';
                     distList.appendChild(row);
                 });
             } else {
@@ -1735,9 +2292,16 @@
         const FIELDS = ['savings', 'salary', 'age', 'retireAge', 'investPerc', 'investVal', 'raise', 'inflation', 'gold', 'usd'];
 
         function collectState() {
-            const d = { investments: [], goals: [] };
+            const d = { investments: [], futureInvestments: [], mirrorFutureSplit: true, goals: [] };
             FIELDS.forEach(f => d[f] = document.getElementById(f).value);
-            document.querySelectorAll('.invest-row:not(.goal-row)').forEach(row => d.investments.push({
+            document.querySelectorAll('#investmentsContainer .invest-row').forEach(row => d.investments.push({
+                t: row.querySelector('.title-input').value,
+                a: row.querySelector('.amount-input')?.value || '',
+                w: row.querySelector('.weight-input').value,
+                r: row.querySelector('.return-input').value
+            }));
+            d.mirrorFutureSplit = document.getElementById('mirrorFutureSplitToggle') ? document.getElementById('mirrorFutureSplitToggle').checked : true;
+            document.querySelectorAll('#futureInvestmentsContainer .future-invest-row').forEach(row => d.futureInvestments.push({
                 t: row.querySelector('.title-input').value,
                 w: row.querySelector('.weight-input').value,
                 r: row.querySelector('.return-input').value
@@ -1753,9 +2317,32 @@
         function applyState(d) {
             FIELDS.forEach(f => { if (d[f] !== undefined) document.getElementById(f).value = d[f]; });
             document.getElementById('investmentsContainer').innerHTML = '';
+            const futureCont = document.getElementById('futureInvestmentsContainer');
+            if (futureCont) futureCont.innerHTML = '';
             document.getElementById('goalsContainer').innerHTML = '';
-            (d.investments || []).forEach(i => addInvestmentRow(i.t, i.w, i.r));
+            (d.investments || []).forEach(i => {
+                if (i.a !== undefined && i.a !== '') {
+                    addInvestmentRow(i.t, i.a, i.w, i.r);
+                } else {
+                    addInvestmentRow(i.t, '', i.w, i.r);
+                }
+            });
+
+            const mirror = d.mirrorFutureSplit !== undefined ? d.mirrorFutureSplit : true;
+            const mirrorToggle = document.getElementById('mirrorFutureSplitToggle');
+            if (mirrorToggle) mirrorToggle.checked = mirror;
+
+            (d.futureInvestments || []).forEach(fi => {
+                addFutureInvestmentRow(fi.t, fi.w, fi.r);
+            });
+            onMirrorFutureSplitChanged();
+
             (d.goals || []).forEach(g => addGoalRow(g.n, g.a, g.v));
+            // If weights are present but amounts were not saved, calculate amounts
+            const hasAnyAmt = [...document.querySelectorAll('#investmentsContainer .invest-row')].some(r => parseFloat(r.querySelector('.amount-input')?.value) > 0);
+            if (!hasAnyAmt) {
+                syncInvestmentSplitToAmount();
+            }
             calculate();
         }
 
@@ -1790,16 +2377,21 @@
         function toCompact(d) {
             return [d.savings, d.salary, d.age, d.retireAge, d.investPerc, d.investVal,
                 d.raise, d.inflation, d.gold, d.usd,
-                d.investments.map(i => [i.t, i.w, i.r]),
-                d.goals.map(g => [g.n, g.a, g.v])];
+                (d.investments || []).map(i => [i.t, i.w, i.r, i.a || '']),
+                (d.goals || []).map(g => [g.n, g.a, g.v]),
+                d.mirrorFutureSplit ? 1 : 0,
+                (d.futureInvestments || []).map(fi => [fi.t, fi.w, fi.r])
+            ];
         }
 
         function fromCompact(arr) {
-            const [savings, salary, age, retireAge, investPerc, investVal, raise, inflation, gold, usd, inv, goals] = arr;
+            const [savings, salary, age, retireAge, investPerc, investVal, raise, inflation, gold, usd, inv, goals, mirror, futureInv] = arr;
             return {
                 savings, salary, age, retireAge, investPerc, investVal, raise, inflation, gold, usd,
-                investments: (inv || []).map(([t, w, r]) => ({ t, w, r })),
-                goals: (goals || []).map(([n, a, v]) => ({ n, a, v }))
+                investments: (inv || []).map(([t, w, r, a]) => ({ t, w, r, a: a !== undefined ? a : '' })),
+                goals: (goals || []).map(([n, a, v]) => ({ n, a, v })),
+                mirrorFutureSplit: mirror !== undefined ? !!mirror : true,
+                futureInvestments: (futureInv || []).map(([t, w, r]) => ({ t, w, r }))
             };
         }
 
@@ -1918,10 +2510,21 @@
         ];
         const TOLA_PER_OZT = 11.6638 / 31.1034768;   // 1 tola = 11.6638 g, 1 troy oz = 31.1035 g
 
+        // Live spot (USD/troy oz). currency-api's XAU is a daily snapshot that drifts from live spot.
+        async function fetchLiveGoldSpotUsd() {
+            try {
+                const res = await fetch('https://api.gold-api.com/price/XAU', { cache: 'no-store' });
+                if (!res.ok) return null;
+                const p = parseFloat((await res.json()).price);
+                return Number.isFinite(p) && p > 0 ? p : null;
+            } catch (e) { return null; }
+        }
+
         async function fetchRates() {
             const btn = document.getElementById('rateBtn'), note = document.getElementById('rateNote');
             btn.disabled = true;
             note.textContent = 'Fetching live rates…';
+            const liveSpotPromise = fetchLiveGoldSpotUsd();
             for (const url of RATE_URLS) {
                 try {
                     const res = await fetch(url, { cache: 'no-store' });
@@ -1931,10 +2534,14 @@
                     if (!d || !d.pkr) continue;
                     document.getElementById('usd').value = Math.round(d.pkr);
                     let goldMsg = '';
-                    if (d.xau) {
-                        // xau is troy ounces per USD, so 1/xau is USD per troy ounce
-                        document.getElementById('gold').value = Math.round((1 / d.xau) * d.pkr * TOLA_PER_OZT);
-                        goldMsg = ' Gold is the international spot price per tola; local retail usually runs a little higher.';
+                    const liveSpot = await liveSpotPromise;
+                    // xau is troy ounces per USD, so 1/xau is USD per troy ounce
+                    const usdPerOzt = liveSpot || (d.xau ? 1 / d.xau : null);
+                    if (usdPerOzt) {
+                        document.getElementById('gold').value = Math.round(usdPerOzt * d.pkr * TOLA_PER_OZT);
+                        goldMsg = ' Gold is the international spot price per tola'
+                            + (liveSpot ? ' (live)' : ' (daily snapshot)')
+                            + '; local retail usually runs a little higher.';
                     }
                     note.textContent = 'Updated for ' + (body.date || 'today') + '.' + goldMsg;
                     btn.disabled = false;
@@ -2152,6 +2759,7 @@
 
             const cars = (state && state.cars) || [];
             const gold = (state && state.gold) || [];
+            const funds = (state && state.funds) || [];
             const stocks = (state && state.stocks) || [];
             const estates = (state && state.estates) || [];
             const cash = (state && state.cash) || [];
@@ -2169,6 +2777,14 @@
                 return s + v;
             }, 0);
 
+            const sumFunds = funds.reduce((s, f) => {
+                let v = parseFloat(f.val) || 0;
+                if (v <= 0 && parseFloat(f.units) > 0) {
+                    v = (parseFloat(f.units) || 0) * (parseFloat(f.nav) || 0);
+                }
+                return s + v;
+            }, 0);
+
             const sumStocks = stocks.reduce((s, st) => {
                 let v = parseFloat(st.val) || 0;
                 if (v <= 0 && parseFloat(st.qty) > 0) {
@@ -2182,14 +2798,31 @@
 
             const totalVehicles = sumCars || (totals ? parseFloat(totals.vehicles) || 0 : 0);
             const totalGold = sumGold || (totals ? parseFloat(totals.gold) || 0 : 0);
+            const totalFunds = sumFunds || (totals ? parseFloat(totals.funds) || 0 : 0);
             const totalStocks = sumStocks || (totals ? parseFloat(totals.stocks) || 0 : 0);
             const totalEstates = sumEstates || (totals ? parseFloat(totals.realEstate) || 0 : 0);
             const totalCash = sumCash || (totals ? parseFloat(totals.cash) || 0 : 0);
 
-            const totalAssets = totalVehicles + totalGold + totalStocks + totalEstates + totalCash;
+            const totalAssets = totalVehicles + totalGold + totalFunds + totalStocks + totalEstates + totalCash;
             if (totalAssets <= 0) return null;
 
             const categories = [
+                {
+                    id: 'funds',
+                    name: 'Mutual Funds / Islamic Funds',
+                    icon: '📊',
+                    val: totalFunds,
+                    expectedReturn: 14,
+                    items: funds.map(f => {
+                        const v = (parseFloat(f.val) || 0) || ((parseFloat(f.units) || 0) * (parseFloat(f.nav) || 0));
+                        return {
+                            name: `${f.name || 'Mutual Fund'}`,
+                            detail: `${f.name || 'Fund'} (${Number(f.units || 0).toLocaleString()} units @ Rs. ${f.nav || 0})`,
+                            val: v,
+                            expectedReturn: 14
+                        };
+                    }).filter(i => i.val > 0)
+                },
                 {
                     id: 'stocks',
                     name: 'PSX Equities / Stocks',
@@ -2317,7 +2950,7 @@
                     strip.style.display = 'block';
                     strip.innerHTML = `
                         <div style="font-size: 0.74rem; color: var(--text-dim); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-                            <span>💡 Tip: Track your <b>Gold, Cars, PSX Stocks, Property &amp; Cash</b> in the Net Worth Tracker to auto-fill suggestions.</span>
+                            <span>💡 Tip: Track your <b>Gold, Mutual Funds, PSX Stocks, Property, Cars &amp; Cash</b> in the Net Worth Tracker to auto-fill suggestions.</span>
                             <a href="networth.html" class="nw-chip" style="color: var(--secondary); border-color: var(--secondary); text-decoration: none;">Open Net Worth Tracker &rarr;</a>
                         </div>
                     `;
@@ -2372,7 +3005,10 @@
                     const weight = Number(((it.val / nw.totalAssets) * 100).toFixed(1));
                     chip.title = `Add ${it.detail} — ${rs(it.val)} (${weight}% of assets)`;
                     chip.innerHTML = `<span>${it.icon}</span> <span>${it.name} (${compact(it.val)})</span>`;
-                    chip.onclick = () => addInvestmentRow(it.name, weight, it.expectedReturn);
+                    chip.onclick = () => {
+                        lastKnownPortfolioBase = nw.totalAssets;
+                        addInvestmentRow(it.name, Math.round(it.val), weight, it.expectedReturn);
+                    };
                     freshChipsList.appendChild(chip);
                 });
             }
@@ -2402,6 +3038,7 @@
         function onInvestmentTitlePicked(inputEl) {
             const row = inputEl.closest('.invest-row');
             if (!row) return;
+            const amountEl = row.querySelector('.amount-input');
             const weightEl = row.querySelector('.weight-input');
             const returnEl = row.querySelector('.return-input');
             const val = inputEl.value.trim().toLowerCase();
@@ -2420,6 +3057,7 @@
                     if (val === iname || val === idetail || (val.length > 2 && (iname.includes(val) || idetail.includes(val)))) {
                         matched = {
                             name: item.name,
+                            val: item.val,
                             weight: Number(((item.val / nw.totalAssets) * 100).toFixed(1)),
                             expectedReturn: item.expectedReturn
                         };
@@ -2435,6 +3073,7 @@
                     return val === cn || cn.includes(val) ||
                            (val === 'gold' && c.id === 'gold') ||
                            ((val === 'car' || val === 'cars' || val === 'vehicle') && c.id === 'cars') ||
+                           ((val === 'fund' || val === 'funds' || val === 'mutual' || val === 'mutual fund' || val === 'kmif' || val === 'mif') && c.id === 'funds') ||
                            ((val === 'stock' || val === 'stocks' || val === 'psx' || val === 'equity') && c.id === 'stocks') ||
                            ((val === 'estate' || val === 'property' || val === 'real estate') && c.id === 'estates') ||
                            ((val === 'cash' || val === 'bank' || val === 'savings') && c.id === 'cash');
@@ -2442,6 +3081,7 @@
                 if (foundCat) {
                     matched = {
                         name: foundCat.name,
+                        val: foundCat.val,
                         weight: foundCat.weight,
                         expectedReturn: foundCat.expectedReturn
                     };
@@ -2450,6 +3090,10 @@
 
             if (matched) {
                 let changed = false;
+                if (amountEl && (!amountEl.value || parseFloat(amountEl.value) === 0) && matched.val) {
+                    amountEl.value = Math.round(matched.val);
+                    changed = true;
+                }
                 if (!weightEl.value || parseFloat(weightEl.value) === 0) {
                     weightEl.value = matched.weight || 0;
                     changed = true;
@@ -2459,8 +3103,9 @@
                     changed = true;
                 }
                 if (changed) {
+                    lastKnownPortfolioBase = nw.totalAssets;
                     calculate();
-                    toast(`Auto-filled split (${matched.weight}%) & return (${matched.expectedReturn}%) for ${matched.name}`, 'info');
+                    toast(`Auto-filled ${matched.name} (${compact(matched.val)}, ${matched.weight}%, ~${matched.expectedReturn}%)`, 'info');
                 }
             }
         }
@@ -2471,7 +3116,8 @@
             const normalized = normalizePercentages(nw.categories);
             const cat = normalized.find(c => c.id === catId);
             if (cat) {
-                addInvestmentRow(cat.name, cat.weight, cat.expectedReturn);
+                lastKnownPortfolioBase = nw.totalAssets;
+                addInvestmentRow(cat.name, Math.round(cat.val), cat.weight, cat.expectedReturn);
                 toast(`Added ${cat.name} (${cat.weight}%) from Net Worth Tracker`, 'info');
             }
         }
@@ -2483,10 +3129,11 @@
                 return;
             }
             const normalized = normalizePercentages(nw.categories);
+            lastKnownPortfolioBase = nw.totalAssets;
             const container = document.getElementById('investmentsContainer');
             container.innerHTML = '';
             normalized.forEach(c => {
-                addInvestmentRow(c.name, c.weight, c.expectedReturn);
+                addInvestmentRow(c.name, Math.round(c.val), c.weight, c.expectedReturn);
             });
             calculate();
             toast(`⚡ Auto-filled 100% portfolio split from your Net Worth (${rs(nw.totalAssets)})!`, 'success');
@@ -2506,10 +3153,11 @@
                 return;
             }
             const normalized = normalizePercentages(allItems);
+            lastKnownPortfolioBase = nw.totalAssets;
             const container = document.getElementById('investmentsContainer');
             container.innerHTML = '';
             normalized.forEach(it => {
-                addInvestmentRow(it.name, it.weight, it.expectedReturn);
+                addInvestmentRow(it.name, Math.round(it.val), it.weight, it.expectedReturn);
             });
             calculate();
             toast(`⚡ Auto-filled ${normalized.length} individual holdings from Net Worth!`, 'success');
@@ -2527,7 +3175,7 @@
                             <div style="font-size: 2.5rem; margin-bottom: 12px;">📊</div>
                             <div style="font-weight: 800; font-size: 1.1rem; margin-bottom: 8px; color: var(--text-main);">No Net Worth Data Found</div>
                             <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 20px; line-height: 1.5;">
-                                Track your physical gold, cars, PSX stocks, property, and cash in the Net Worth Tracker. Once added, you can auto-fill and balance your investment portfolio here with 1 click!
+                                Track your physical gold, mutual funds, PSX stocks, property, cars, and cash in the Net Worth Tracker. Once added, you can auto-fill and balance your investment portfolio here with 1 click!
                             </p>
                             <div class="modal-actions" style="justify-content: center; gap: 10px;">
                                 <button class="btn-action btn-secondary" onclick="this.closest('.modal-backdrop').remove()">Close</button>
@@ -2560,7 +3208,7 @@
                     <td><span class="nw-badge green">${c.weight}%</span></td>
                     <td><span class="nw-badge gold">${c.expectedReturn}% / yr</span></td>
                     <td style="text-align: right;">
-                        <button type="button" class="btn-add" style="padding: 4px 8px; font-size: 0.72rem;" onclick="addInvestmentRow('${esc(c.name)}', ${c.weight}, ${c.expectedReturn}); toast('Added ${esc(c.name)}', 'info');">
+                        <button type="button" class="btn-add" style="padding: 4px 8px; font-size: 0.72rem;" onclick="lastKnownPortfolioBase = ${nw.totalAssets}; addInvestmentRow('${esc(c.name)}', ${Math.round(c.val)}, ${c.weight}, ${c.expectedReturn}); toast('Added ${esc(c.name)}', 'info');">
                             + Add
                         </button>
                     </td>
@@ -2577,7 +3225,7 @@
                     <td><span class="nw-badge green">${it.weight}%</span></td>
                     <td><span class="nw-badge gold">${it.expectedReturn}% / yr</span></td>
                     <td style="text-align: right;">
-                        <button type="button" class="btn-add" style="padding: 4px 8px; font-size: 0.72rem;" onclick="addInvestmentRow('${esc(it.name)}', ${it.weight}, ${it.expectedReturn}); toast('Added ${esc(it.name)}', 'info');">
+                        <button type="button" class="btn-add" style="padding: 4px 8px; font-size: 0.72rem;" onclick="lastKnownPortfolioBase = ${nw.totalAssets}; addInvestmentRow('${esc(it.name)}', ${Math.round(it.val)}, ${it.weight}, ${it.expectedReturn}); toast('Added ${esc(it.name)}', 'info');">
                             + Add
                         </button>
                     </td>

@@ -1125,6 +1125,7 @@
                             <span>24K Spot: <b id="spot24kTola">Rs. 0 / tola</b></span>
                             <span>•</span>
                             <span>21K Rate: <b id="spot21kTola">Rs. 0 / tola</b></span>
+                            <span id="goldRateSubtitle" style="font-size: 0.72rem; color: var(--text-dim); margin-left: 2px;"></span>
                         </div>
                         <div style="display: flex; gap: 8px; align-items: center;">
                             <a href="https://goldpricez.com/pk/21k/tola-india" target="_blank" rel="noopener noreferrer"
@@ -1147,7 +1148,30 @@
                 <div id="goldContainer"></div>
             </div>
 
-            <!-- 3. Stocks & Equities -->
+            <!-- 3. Mutual Funds & Islamic Funds -->
+            <div class="category-box">
+                <div class="category-header">
+                    <div class="category-title">
+                        <span>📊</span> Mutual Funds
+                        <span class="category-badge" id="fundCount">0</span>
+                    </div>
+                    <div class="category-total" id="fundTotal">Rs. 0</div>
+                    <button class="btn-add" onclick="addFundRow('', '', '')">+ Add Mutual Fund</button>
+                </div>
+                <div id="fundsContainer"></div>
+                <datalist id="mutualFundDatalist">
+                    <option value="KMIF — Meezan Islamic Fund" label="Shariah Equity (NAV ~156.75)"></option>
+                    <option value="MRAF — Meezan Rozana Amdani Fund" label="Daily Dividend (NAV ~50.00)"></option>
+                    <option value="MCF — Meezan Cash Fund" label="Money Market (NAV ~55.00)"></option>
+                    <option value="MSF — Meezan Sovereign Fund" label="Income Fund (NAV ~58.00)"></option>
+                    <option value="MIIF — Meezan Islamic Income Fund" label="Income Fund (NAV ~59.00)"></option>
+                    <option value="ALHAA — Alhamra Islamic Asset Allocation" label="Asset Allocation (NAV ~95.00)"></option>
+                    <option value="NBP-ISF — NBP Islamic Stock Fund" label="Equity Fund (NAV ~16.50)"></option>
+                    <option value="UBL-IESF — UBL Islamic Energy Fund" label="Sector Equity (NAV ~125.00)"></option>
+                </datalist>
+            </div>
+
+            <!-- 4. Stocks & Equities -->
             <div class="category-box">
                 <div class="category-header">
                     <div class="category-title">
@@ -1342,6 +1366,7 @@
         const CATEGORY_COLORS = {
             vehicles: '#06b6d4',
             gold: '#f59e0b',
+            funds: '#a855f7',
             stocks: '#10b981',
             realEstate: '#818cf8',
             cash: '#38bdf8',
@@ -1397,12 +1422,33 @@
 
             document.getElementById('spot24kTola').innerText = rsFull(tola24k);
             document.getElementById('spot21kTola').innerText = rsFull(tola21k);
+            const subEl = document.getElementById('goldRateSubtitle');
+            if (subEl) {
+                subEl.innerText = rates.goldSpotUsd && rates.pkrUsd 
+                    ? `($${rates.goldSpotUsd.toFixed(1)}/oz @ Rs. ${rates.pkrUsd.toFixed(2)})`
+                    : '';
+            }
 
             document.getElementById('rate24kLabel').innerText = rs(tola24k);
             document.getElementById('rate22kLabel').innerText = rs(tola22k);
             document.getElementById('rate21kLabel').innerText = rs(tola21k);
             document.getElementById('rate18kLabel').innerText = rs(tola18k);
             document.getElementById('rateGramLabel').innerText = rs(gram24k);
+        }
+
+        // Live international gold spot (USD per troy ounce). The currency-api XAU value is a
+        // once-a-day snapshot and can sit ~1-2% away from the live spot that sites like
+        // goldpricez.com use, so prefer a real-time feed and fall back to the daily one.
+        async function fetchLiveGoldSpotUsd() {
+            try {
+                const res = await fetch('https://api.gold-api.com/price/XAU', { cache: 'no-store' });
+                if (!res.ok) return null;
+                const j = await res.json();
+                const p = parseFloat(j.price);
+                return Number.isFinite(p) && p > 0 ? p : null;
+            } catch (e) {
+                return null;
+            }
         }
 
         async function fetchLiveRates() {
@@ -1414,6 +1460,7 @@
                 'https://latest.currency-api.pages.dev/v1/currencies/usd.json',
                 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json'
             ];
+            const liveSpotPromise = fetchLiveGoldSpotUsd();
 
             for (const url of urls) {
                 try {
@@ -1424,9 +1471,11 @@
                     if (!d || !d.pkr) continue;
 
                     rates.pkrUsd = d.pkr;
-                    if (d.xau) {
-                        rates.xauUsd = d.xau;
-                        const usdPerOzt = 1 / d.xau;
+                    const liveSpot = await liveSpotPromise;
+                    const usdPerOzt = liveSpot || (d.xau ? 1 / d.xau : null);
+                    if (usdPerOzt) {
+                        rates.xauUsd = 1 / usdPerOzt;
+                        rates.goldSpotUsd = usdPerOzt;
                         const pkrPerOzt = usdPerOzt * d.pkr;
                         rates.gold24kTola = Math.round(pkrPerOzt * TOLA_PER_OZT);
                         rates.gold24kGram = Math.round(pkrPerOzt * GRAM_PER_OZT);
@@ -1551,6 +1600,93 @@
 
         function recalculateGoldRows() {
             document.querySelectorAll('.gold-row').forEach(row => updateGoldRowDisplay(row));
+        }
+
+        /* ---------------------------------------------------------------
+           Mutual Funds Management (KMIF, Meezan, Alhamra, NBP, etc.)
+           --------------------------------------------------------------- */
+        const MUTUAL_FUND_BENCHMARKS = {
+            'KMIF': { nav: 156.75, name: 'KMIF — Meezan Islamic Fund', type: 'Shariah Equity Fund' },
+            'MIF': { nav: 156.75, name: 'KMIF — Meezan Islamic Fund', type: 'Shariah Equity Fund' },
+            'MRAF': { nav: 50.00, name: 'MRAF — Meezan Rozana Amdani Fund', type: 'Shariah Daily Dividend' },
+            'MCF': { nav: 55.00, name: 'MCF — Meezan Cash Fund', type: 'Shariah Money Market' },
+            'MSF': { nav: 58.00, name: 'MSF — Meezan Sovereign Fund', type: 'Shariah Income Fund' },
+            'MIIF': { nav: 59.00, name: 'MIIF — Meezan Islamic Income Fund', type: 'Shariah Income Fund' },
+            'ALHAA': { nav: 95.00, name: 'ALHAA — Alhamra Islamic Asset Allocation Fund', type: 'Asset Allocation' },
+            'NBP-ISF': { nav: 16.50, name: 'NBP-ISF — NBP Islamic Stock Fund', type: 'Equity Fund' },
+            'UBL-IESF': { nav: 125.00, name: 'UBL-IESF — UBL Islamic Energy Fund', type: 'Equity Fund' }
+        };
+
+        function addFundRow(name = '', units = '', nav = '') {
+            const container = document.getElementById('fundsContainer');
+            const row = document.createElement('div');
+            row.className = 'entity-card fund-row';
+            row.id = 'row-' + (++rowIdSeq);
+            row.innerHTML = `
+                <div class="entity-main-row">
+                    <input type="text" placeholder="Mutual Fund (e.g. KMIF, MCF, Alhamra)" value="${esc(name)}" list="mutualFundDatalist" class="fund-name entity-title-input" onchange="onFundNameChange(this)">
+                    <div class="entity-val-display sensitive fund-row-val">Rs. 0</div>
+                    <button class="btn-remove" onclick="removeRow(this)">&times;</button>
+                </div>
+                <div class="entity-sub-row">
+                    <div class="sub-field">
+                        <span class="sub-label">Units:</span>
+                        <input type="number" min="0" step="any" placeholder="Units" value="${units}" class="fund-units sub-input num-sm sensitive" oninput="onFundInputChange(this)">
+                    </div>
+                    <div class="sub-field">
+                        <span class="sub-label">Current NAV:</span>
+                        <input type="number" min="0" step="any" placeholder="Rs. NAV" value="${nav}" class="fund-nav sub-input num-md sensitive" oninput="onFundInputChange(this)">
+                    </div>
+                    <div class="sub-rate-tag fund-calc-indicator">Total: Rs. 0</div>
+                </div>
+            `;
+            container.appendChild(row);
+            updateFundRowDisplay(row);
+            calculateNetWorth();
+        }
+
+        function onFundNameChange(input) {
+            const row = input.closest('.fund-row');
+            if (!row) return;
+            const raw = (input.value || '').trim();
+            const upper = raw.toUpperCase().replace(/\.PK$|\.MF$/, '');
+            const navInput = row.querySelector('.fund-nav');
+
+            let matched = null;
+            for (const [key, bm] of Object.entries(MUTUAL_FUND_BENCHMARKS)) {
+                if (upper === key || upper.startsWith(key) || upper.includes(key)) {
+                    matched = bm;
+                    break;
+                }
+            }
+
+            if (matched) {
+                if (!navInput.value || parseFloat(navInput.value) === 0) {
+                    navInput.value = matched.nav.toFixed(2);
+                    if (!raw.includes('—')) input.value = matched.name;
+                    updateFundRowDisplay(row);
+                    calculateNetWorth();
+                    toast(`Auto-filled NAV for ${matched.name}: Rs. ${matched.nav.toFixed(2)}`, 'info');
+                }
+            }
+        }
+
+        function onFundInputChange(el) {
+            const row = el.closest('.fund-row');
+            updateFundRowDisplay(row);
+            calculateNetWorth();
+        }
+
+        function updateFundRowDisplay(row) {
+            const units = parseFloat(row.querySelector('.fund-units').value) || 0;
+            const nav = parseFloat(row.querySelector('.fund-nav').value) || 0;
+            const total = Math.round(units * nav);
+            row.querySelector('.fund-row-val').innerText = rs(total);
+            const tag = row.querySelector('.fund-calc-indicator');
+            if (tag) {
+                tag.innerText = nav > 0 ? `@ Rs. ${nav.toFixed(2)} / unit • Total: ${rs(total)}` : `Total: ${rs(total)}`;
+            }
+            row.dataset.calculatedValue = total;
         }
 
         function addStockRow(ticker = '', qty = '', price = '') {
@@ -1730,7 +1866,8 @@
         }
 
         function removeRow(btn) {
-            btn.closest('.entity-row').remove();
+            const card = btn.closest('.entity-card') || btn.closest('.entity-row');
+            if (card) card.remove();
             calculateNetWorth();
         }
 
@@ -1742,6 +1879,7 @@
         let currentTotals = {
             vehicles: 0,
             gold: 0,
+            funds: 0,
             stocks: 0,
             realEstate: 0,
             cash: 0,
@@ -1771,7 +1909,19 @@
             document.getElementById('goldTotal').innerText = rs(gTotal);
             document.getElementById('goldCount').innerText = gCount;
 
-            // 3. Stocks
+            // 3. Mutual Funds
+            let fTotal = 0, fCount = 0;
+            document.querySelectorAll('.fund-row').forEach(row => {
+                const val = parseFloat(row.dataset.calculatedValue) || 0;
+                fTotal += val;
+                fCount++;
+            });
+            const fundTotEl = document.getElementById('fundTotal');
+            if (fundTotEl) fundTotEl.innerText = rs(fTotal);
+            const fundCntEl = document.getElementById('fundCount');
+            if (fundCntEl) fundCntEl.innerText = fCount;
+
+            // 4. Stocks
             let sTotal = 0, sCount = 0;
             document.querySelectorAll('.stock-row').forEach(row => {
                 const val = parseFloat(row.dataset.calculatedValue) || 0;
@@ -1781,7 +1931,7 @@
             document.getElementById('stockTotal').innerText = rs(sTotal);
             document.getElementById('stockCount').innerText = sCount;
 
-            // 4. Real Estate
+            // 5. Real Estate
             let eTotal = 0, eCount = 0;
             document.querySelectorAll('.estate-row').forEach(row => {
                 const val = parseFloat(row.querySelector('.estate-val').value) || 0;
@@ -1791,7 +1941,7 @@
             document.getElementById('estateTotal').innerText = rs(eTotal);
             document.getElementById('estateCount').innerText = eCount;
 
-            // 5. Cash & Other
+            // 6. Cash & Other
             let cTotal = 0, cCount = 0;
             document.querySelectorAll('.cash-row').forEach(row => {
                 const val = parseFloat(row.querySelector('.cash-val').value) || 0;
@@ -1801,7 +1951,7 @@
             document.getElementById('cashTotal').innerText = rs(cTotal);
             document.getElementById('cashCount').innerText = cCount;
 
-            // 6. Liabilities
+            // 7. Liabilities
             let lTotal = 0, lCount = 0;
             document.querySelectorAll('.liability-row').forEach(row => {
                 const val = parseFloat(row.querySelector('.liability-val').value) || 0;
@@ -1812,12 +1962,13 @@
             document.getElementById('liabilityCount').innerText = lCount;
 
             // Totals
-            const totalAssets = vTotal + gTotal + sTotal + eTotal + cTotal;
+            const totalAssets = vTotal + gTotal + fTotal + sTotal + eTotal + cTotal;
             const netWorth = totalAssets - lTotal;
 
             currentTotals = {
                 vehicles: vTotal,
                 gold: gTotal,
+                funds: fTotal,
                 stocks: sTotal,
                 realEstate: eTotal,
                 cash: cTotal,
@@ -1858,6 +2009,7 @@
             const items = [
                 { key: 'vehicles', name: 'Vehicles', val: t.vehicles, color: CATEGORY_COLORS.vehicles },
                 { key: 'gold', name: 'Gold', val: t.gold, color: CATEGORY_COLORS.gold },
+                { key: 'funds', name: 'Mutual Funds', val: t.funds || 0, color: CATEGORY_COLORS.funds },
                 { key: 'stocks', name: 'Stocks', val: t.stocks, color: CATEGORY_COLORS.stocks },
                 { key: 'realEstate', name: 'Real Estate', val: t.realEstate, color: CATEGORY_COLORS.realEstate },
                 { key: 'cash', name: 'Cash / Other', val: t.cash, color: CATEGORY_COLORS.cash }
@@ -2156,6 +2308,7 @@
             const data = {
                 cars: [],
                 gold: [],
+                funds: [],
                 stocks: [],
                 estates: [],
                 cash: [],
@@ -2173,6 +2326,13 @@
                 karat: row.querySelector('.gold-karat').value,
                 qty: row.querySelector('.gold-qty').value,
                 unit: row.querySelector('.gold-unit').value,
+                val: parseFloat(row.dataset.calculatedValue) || 0
+            }));
+
+            document.querySelectorAll('.fund-row').forEach(row => data.funds.push({
+                name: row.querySelector('.fund-name').value,
+                units: row.querySelector('.fund-units').value,
+                nav: row.querySelector('.fund-nav').value,
                 val: parseFloat(row.dataset.calculatedValue) || 0
             }));
 
@@ -2206,6 +2366,8 @@
         function applyState(data) {
             document.getElementById('carsContainer').innerHTML = '';
             document.getElementById('goldContainer').innerHTML = '';
+            const fCont = document.getElementById('fundsContainer');
+            if (fCont) fCont.innerHTML = '';
             document.getElementById('stocksContainer').innerHTML = '';
             document.getElementById('estateContainer').innerHTML = '';
             document.getElementById('cashContainer').innerHTML = '';
@@ -2213,6 +2375,7 @@
 
             (data.cars || []).forEach(c => addCarRow(c.make, c.year, c.val));
             (data.gold || []).forEach(g => addGoldRow(g.name, g.karat, g.qty, g.unit));
+            (data.funds || []).forEach(f => addFundRow(f.name, f.units, f.nav));
             (data.stocks || []).forEach(s => addStockRow(s.ticker, s.qty, s.price));
             (data.estates || []).forEach(e => addEstateRow(e.name, e.type, e.val));
             (data.cash || []).forEach(c => addCashRow(c.name, c.cat, c.val));
@@ -2281,7 +2444,7 @@
 
         async function resetAll() {
             if (await customConfirm('Clear all entries and reset to blank?')) {
-                applyState({ cars: [], gold: [], stocks: [], estates: [], cash: [], liabilities: [] });
+                applyState({ cars: [], gold: [], funds: [], stocks: [], estates: [], cash: [], liabilities: [] });
                 calculateNetWorth();
                 toast('All entries cleared.', 'info');
             }
@@ -2373,6 +2536,7 @@
             addCarRow('Honda Civic RS', '2022', 7500000);
             addGoldRow('21K Family Jewelry', '21K', 5, 'tola');
             addGoldRow('24K Minted Bullion Bar', '24K', 2, 'tola');
+            addFundRow('KMIF — Meezan Islamic Fund', 2500, 156.75);
             addStockRow('ENGRO', 1000, 310);
             addStockRow('LUCK', 500, 850);
             addStockRow('SYS', 1200, 420);
