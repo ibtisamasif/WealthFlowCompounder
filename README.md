@@ -6,6 +6,15 @@ Plug in your salary, savings, and portfolio. Watch the projection move in real t
 
 ---
 
+## 🌐 Live Web App
+
+Explore the live app on GitHub Pages (runs client-side directly in your browser with zero installation):
+
+- 🚀 **[WealthFlow Compounder](https://ibtisamasif.github.io/WealthFlowCompounder/)** — Retirement & Wealth Growth Projection
+- 📊 **[Daily Net Worth Tracker](https://ibtisamasif.github.io/WealthFlowCompounder/networth.html)** — Daily Asset Tracking (Gold, Equities, Real Estate, Vehicles, Cash)
+
+---
+
 ## What it does
 
 - **Projects your wealth** from today to retirement, based on salary, raises, and investments
