@@ -1,17 +1,22 @@
-# WealthFlow — Compounder
+# WealthFlow — Compounder & Net Worth Tracker
 
-A no-nonsense tool that shows you how your money actually grows — and what your big life goals cost your retirement along the way.
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-success?style=for-the-badge&logo=github)](https://ibtisamasif.github.io/WealthFlowCompounder/)
+[![Daily Tracker](https://img.shields.io/badge/Daily%20Tracker-Live%20App-blue?style=for-the-badge&logo=safari)](https://ibtisamasif.github.io/WealthFlowCompounder/networth.html)
+[![Tests](https://img.shields.io/badge/Tests-23%20Passing-brightgreen?style=for-the-badge&logo=node.js)](https://github.com/ibtisamasif/WealthFlowCompounder)
+[![Zero Dependencies](https://img.shields.io/badge/Dependencies-0-orange?style=for-the-badge)](https://github.com/ibtisamasif/WealthFlowCompounder)
 
-Plug in your salary, savings, and portfolio. Watch the projection move in real time.
+A no-nonsense financial planning suite that shows you how your money actually grows — and tracks your real-world daily net worth across Gold, Equities, Real Estate, Vehicles, and Cash.
 
 ---
 
 ## 🌐 Live Web App
 
-Explore the live app on GitHub Pages (runs client-side directly in your browser with zero installation):
+Explore the live apps directly in your browser with zero installation:
 
-- 🚀 **[WealthFlow Compounder](https://ibtisamasif.github.io/WealthFlowCompounder/)** — Retirement & Wealth Growth Projection
-- 📊 **[Daily Net Worth Tracker](https://ibtisamasif.github.io/WealthFlowCompounder/networth.html)** — Daily Asset Tracking (Gold, Equities, Real Estate, Vehicles, Cash)
+| Application | Direct Live Link | Description |
+| :--- | :--- | :--- |
+| 🚀 **WealthFlow Compounder** | **[Launch Compounder](https://ibtisamasif.github.io/WealthFlowCompounder/)** | Retirement curve projection, annual salary raises, goal pricing & portfolio split modeling |
+| 📊 **Daily Net Worth Tracker** | **[Launch Net Worth Tracker](https://ibtisamasif.github.io/WealthFlowCompounder/networth.html)** | Daily net worth logging, live gold spot purity pricing (Tola/Gram), stocks, cars, properties & day-over-day changes |
 
 ---
 
@@ -87,8 +92,9 @@ Everything runs in your browser — your numbers are never uploaded.
 ## Run locally
 
 ```bash
-cd /Users/Shared/work/WealthFlowCompounder/WealthFlowCompounder
-python3 -m http.server 8000 --bind 0.0.0.0
+git clone https://github.com/ibtisamasif/WealthFlowCompounder.git
+cd WealthFlowCompounder
+python3 -m http.server 8000
 ```
 
 Then open your browser at:
