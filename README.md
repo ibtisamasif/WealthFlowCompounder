@@ -34,7 +34,7 @@ A dedicated daily tracking companion that calculates and logs your real-world ne
   - Measure in **Tolas** or **Grams**
   - **Live Spot Price Engine**: Automatically pulls live USD/PKR and XAU gold spot prices from public currency APIs and computes exact Karat purity prices
   - Direct reference link to [GoldPriceZ.com](https://goldpricez.com/pk/21k/tola-india) for quick local retail rate comparison
-- **Stocks & Equities**: Enter company / ticker symbols, share quantities, and market prices per share
+- **Stocks & Equities**: Enter total portfolio market value / day-end worth directly, eliminating tedious per-stock price entry and minimizing daily tracking effort
 - **Real Estate & Plots**: Track plots, residential houses, apartments, and commercial properties
 - **Cash & Bank Accounts**: Add checking/savings accounts, cash reserves, crypto, and other liquid assets
 - **Liabilities & Debt**: Deducts loans, mortgages, or credit card balances to give your true net worth
