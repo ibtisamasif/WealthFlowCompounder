@@ -2,16 +2,15 @@ const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
-const vm = require('vm');
 const { computeNetWorth } = require('../src/calculator');
 
-describe('Net Worth Stocks Simplification & Day-End Total Worth', () => {
-    test('Direct Day-End stock total worth calculation', () => {
+describe('Net Worth Stocks Simplification — Single Total Worth Field', () => {
+    test('Direct single input of total stocks worth calculates accurate net worth', () => {
         const categories = {
             vehicles: 5500000,
             gold: 13000000,
             funds: 2680000,
-            stocks: 4637187, // Single day-end total worth entered directly
+            stocks: 4637187, // Single total worth of Stocks & Equities
             realEstate: 15500000,
             cash: 1046778
         };
@@ -22,54 +21,41 @@ describe('Net Worth Stocks Simplification & Day-End Total Worth', () => {
         assert.equal(res.netWorth, res.grossAssets - liabilities);
     });
 
-    test('Multiple brokerage/stock portfolios day-end total sum', () => {
-        const portfolios = [
-            { name: 'PSX Main Brokerage', val: 3200000 },
-            { name: 'CDC Sub-Account', val: 1437187 }
-        ];
-        const stockTotal = portfolios.reduce((sum, p) => sum + p.val, 0);
-        assert.equal(stockTotal, 4637187);
-    });
-
-    test('Legacy compatibility: converts ticker, qty, price into total val', () => {
+    test('Legacy compatibility: converts legacy stock arrays into single total value', () => {
         const legacyStocks = [
             { ticker: 'ENGRO', qty: 1000, price: 310 },
             { ticker: 'LUCK', qty: 500, price: 850 },
             { ticker: 'SYS', qty: 1200, price: 420 }
         ];
 
-        const modernStocks = legacyStocks.map(s => {
-            const name = s.name || s.ticker || 'PSX Stock Portfolio';
-            const val = s.val !== undefined ? s.val : ((parseFloat(s.qty) || 0) * (parseFloat(s.price) || 0));
-            return { name, val };
-        });
+        // Legacy extraction logic matching networth.html applyState()
+        const total = legacyStocks.reduce((sum, s) => {
+            const itemVal = s.val !== undefined ? parseFloat(s.val) : ((parseFloat(s.qty) || 0) * (parseFloat(s.price) || 0));
+            return sum + (itemVal || 0);
+        }, 0);
 
-        assert.equal(modernStocks[0].name, 'ENGRO');
-        assert.equal(modernStocks[0].val, 310000);
-        assert.equal(modernStocks[1].name, 'LUCK');
-        assert.equal(modernStocks[1].val, 425000);
-        assert.equal(modernStocks[2].name, 'SYS');
-        assert.equal(modernStocks[2].val, 504000);
-
-        const totalLegacyVal = modernStocks.reduce((sum, s) => sum + s.val, 0);
-        assert.equal(totalLegacyVal, 1239000);
+        assert.equal(total, 1000 * 310 + 500 * 850 + 1200 * 420); // 1,239,000
     });
 
-    test('networth.html script parses and initializes stock functions correctly', () => {
+    test('networth.html markup has single total input and NO Add Stock button', () => {
         const networthPath = path.join(__dirname, '..', 'networth.html');
         const html = fs.readFileSync(networthPath, 'utf8');
+
+        // Verify single direct input exists
+        assert.ok(html.includes('id="stocksTotalInput"'), 'Should have id="stocksTotalInput"');
+        assert.ok(html.includes('onStockTotalChange()'), 'Should call onStockTotalChange()');
+
+        // Verify Add Stock Portfolio button has been removed from HTML
+        assert.equal(html.includes('+ Add Stock Portfolio'), false, '"+ Add Stock Portfolio" button should be removed');
+        assert.equal(html.includes('+ Add Stock<'), false, '"+ Add Stock" button should be removed');
+
+        // Verify script functions
         const scriptMatch = html.match(/<script>([\s\S]*?)<\/script>/);
+        assert.ok(scriptMatch, 'Script tag should exist');
+        const script = scriptMatch[1];
 
-        assert.ok(scriptMatch, 'networth.html should contain a script tag');
-        const scriptContent = scriptMatch[1];
-
-        // Ensure PSX live fetch price engine has been removed
-        assert.equal(scriptContent.includes('fetchLiveStockPrices'), false, 'fetchLiveStockPrices should be removed');
-        assert.equal(scriptContent.includes('STOCK_BENCHMARKS'), false, 'STOCK_BENCHMARKS should be removed');
-        assert.equal(scriptContent.includes('undoLastStockPriceUpdate'), false, 'undoLastStockPriceUpdate should be removed');
-
-        // Ensure addStockRow and onStockInputChange exist
-        assert.ok(scriptContent.includes('function addStockRow'), 'addStockRow should exist');
-        assert.ok(scriptContent.includes('function onStockInputChange'), 'onStockInputChange should exist');
+        assert.ok(script.includes('function onStockTotalChange'), 'Should have onStockTotalChange');
+        assert.ok(script.includes('function setStockTotal'), 'Should have setStockTotal');
+        assert.equal(script.includes('fetchLiveStockPrices'), false, 'PSX fetch price engine should be removed');
     });
 });
