@@ -7,25 +7,25 @@ const { computeNetWorth } = require('../src/calculator');
 describe('Net Worth Stocks Simplification — Single Total Worth Field', () => {
     test('Direct single input of total stocks worth calculates accurate net worth', () => {
         const categories = {
-            vehicles: 5500000,
-            gold: 13000000,
-            funds: 2680000,
-            stocks: 4637187, // Single total worth of Stocks & Equities
-            realEstate: 15500000,
-            cash: 1046778
+            vehicles: 2000000,
+            gold: 3000000,
+            funds: 1500000,
+            stocks: 2500000, // Synthetic dummy stocks total
+            realEstate: 5000000,
+            cash: 500000
         };
-        const liabilities = 3500000;
+        const liabilities = 1000000;
 
         const res = computeNetWorth({ categories, liabilities });
-        assert.equal(res.grossAssets, 5500000 + 13000000 + 2680000 + 4637187 + 15500000 + 1046778);
+        assert.equal(res.grossAssets, 2000000 + 3000000 + 1500000 + 2500000 + 5000000 + 500000);
         assert.equal(res.netWorth, res.grossAssets - liabilities);
     });
 
     test('Legacy compatibility: converts legacy stock arrays into single total value', () => {
         const legacyStocks = [
-            { ticker: 'ENGRO', qty: 1000, price: 310 },
-            { ticker: 'LUCK', qty: 500, price: 850 },
-            { ticker: 'SYS', qty: 1200, price: 420 }
+            { ticker: 'STOCK_A', qty: 100, price: 50 },
+            { ticker: 'STOCK_B', qty: 200, price: 100 },
+            { ticker: 'STOCK_C', qty: 300, price: 150 }
         ];
 
         // Legacy extraction logic matching networth.html applyState()
@@ -34,7 +34,7 @@ describe('Net Worth Stocks Simplification — Single Total Worth Field', () => {
             return sum + (itemVal || 0);
         }, 0);
 
-        assert.equal(total, 1000 * 310 + 500 * 850 + 1200 * 420); // 1,239,000
+        assert.equal(total, 100 * 50 + 200 * 100 + 300 * 150); // 5000 + 20000 + 45000 = 70000
     });
 
     test('networth.html markup has single total input and NO Add Stock button', () => {
