@@ -1,0 +1,23 @@
+{
+  "name": "wealthflow-compounder",
+  "version": "1.0.0",
+  "description": "WealthFlow Compounder and Daily Net Worth Tracker",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/",
+    "pr": "node scripts/create_pr.js",
+    "serve": "python3 -m http.server 8000"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "wealth",
+    "compounder",
+    "networth",
+    "calculator",
+    "finance"
+  ],
+  "author": "Ibtisam Asif",
+  "license": "MIT"
+}

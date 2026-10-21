@@ -85,3 +85,26 @@ python3 -m http.server 8000 --bind 0.0.0.0
 Then open your browser at:
 - **Retirement Compounder**: [http://localhost:8000](http://localhost:8000) or [http://localhost:8000/index.html](http://localhost:8000/index.html)
 - **Daily Net Worth Tracker**: [http://localhost:8000/networth.html](http://localhost:8000/networth.html)
+
+---
+
+## Automated Testing & PR Workflow
+
+WealthFlow includes a built-in automated test suite and an automated GitHub Pull Request generator.
+
+### Run Automated Tests
+```bash
+npm test
+```
+Runs 20+ unit and integration test suites covering compounding formulas, zero-return asset integrity, gold purity conversions, formatters, and browser script integrity.
+
+### Generate a Pull Request
+To automatically test, commit, push, and open a Pull Request on GitHub:
+```bash
+node scripts/create_pr.js --title "feat: describe your feature"
+```
+Or with custom branch:
+```bash
+node scripts/create_pr.js --branch feat/my-feature --title "feat: describe your feature"
+```
+The script runs the test suite, ensures 100% test pass rate, pushes the branch, and creates the PR via GitHub REST API with an automated test report.
