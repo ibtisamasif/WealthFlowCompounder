@@ -26,17 +26,17 @@ describe('Net Worth Tracker & Gold Conversion Calculations', () => {
 
     test('Net worth deduction of liabilities from gross assets', () => {
         const categories = {
-            vehicles: 6500000, // 65 Lac
-            gold: 13000000,    // 1.30 Cr
-            stocks: 4600000,   // 46 Lac
-            realEstate: 15500000, // 1.55 Cr
-            cash: 1000000      // 10 Lac
+            vehicles: 1000000,   // 10 Lac
+            gold: 2000000,       // 20 Lac
+            stocks: 3000000,     // 30 Lac
+            realEstate: 5000000, // 50 Lac
+            cash: 500000         // 5 Lac
         };
-        const liabilities = 3500000; // 35 Lac
+        const liabilities = 1500000; // 15 Lac
 
         const res = computeNetWorth({ categories, liabilities });
-        assert.equal(res.grossAssets, 40600000);
-        assert.equal(res.netWorth, 40600000 - 3500000); // 3.71 Cr
-        assert.equal(res.liabilities, 3500000);
+        assert.equal(res.grossAssets, 11500000);
+        assert.equal(res.netWorth, 10000000); // 1.00 Cr
+        assert.equal(res.liabilities, 1500000);
     });
 });

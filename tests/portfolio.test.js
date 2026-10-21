@@ -4,14 +4,14 @@ const { project, calculatePortfolioBreakdown } = require('../src/calculator');
 
 describe('Portfolio Breakdown & Zero-Return Asset Integrity', () => {
     test('Non-growing assets (vehicles @ 0% return) retain 100% nominal value', () => {
-        const savings = 38793267; // Rs. 3.88 Cr
-        const years = 25;
+        const savings = 10000000; // Rs. 1.00 Cr synthetic example
+        const years = 20;
         const existingAssets = [
-            { name: 'PSX Equities', weight: 10.7, ret: 0.15, amount: 4637187 },
-            { name: 'Physical Gold', weight: 30.0, ret: 0.12, amount: 13000690 },
-            { name: 'Real Estate', weight: 35.7, ret: 0.10, amount: 15500000 },
-            { name: 'Vehicles1', weight: 12.7, ret: 0.00, amount: 5507958 },
-            { name: 'Vehicles2', weight: 2.3, ret: 0.00, amount: 1000000 } // 10 Lac
+            { name: 'Equities', weight: 30.0, ret: 0.15, amount: 3000000 },
+            { name: 'Gold', weight: 20.0, ret: 0.12, amount: 2000000 },
+            { name: 'Real Estate', weight: 30.0, ret: 0.10, amount: 3000000 },
+            { name: 'Vehicle A', weight: 10.0, ret: 0.00, amount: 1000000 },
+            { name: 'Vehicle B', weight: 10.0, ret: 0.00, amount: 1000000 }
         ];
 
         // Overall weighted return
@@ -23,7 +23,7 @@ describe('Portfolio Breakdown & Zero-Return Asset Integrity', () => {
             monthlyInvest: 0,
             raise: 0,
             years,
-            inflation: 0.10,
+            inflation: 0.08,
             goals: []
         });
 
@@ -35,23 +35,23 @@ describe('Portfolio Breakdown & Zero-Return Asset Integrity', () => {
             isMirrored: true
         });
 
-        // Vehicles2 started at 10 Lac (1,000,000) with 0% return
-        // It must NOT be scaled down to 6.5 Lac; it must stay at 10 Lac (1,000,000)!
+        // Vehicle A and B started at 10 Lac (1,000,000) with 0% return
+        // They must NOT be scaled down; they must retain 100% of their nominal value (1,000,000)!
         assert.equal(
-            categoryTotals['Vehicles2'],
+            categoryTotals['Vehicle A'],
             1000000,
-            `Vehicles2 with 0% return should remain exactly 10 Lac, got ${categoryTotals['Vehicles2']}`
+            `Vehicle A with 0% return should remain exactly 10 Lac, got ${categoryTotals['Vehicle A']}`
         );
 
         assert.equal(
-            categoryTotals['Vehicles1'],
-            5507958,
-            `Vehicles1 with 0% return should remain exactly 55.08 Lac, got ${categoryTotals['Vehicles1']}`
+            categoryTotals['Vehicle B'],
+            1000000,
+            `Vehicle B with 0% return should remain exactly 10 Lac, got ${categoryTotals['Vehicle B']}`
         );
 
         // Positive compounding assets should compound and scale to absorb total wealth
-        assert.ok(categoryTotals['PSX Equities'] > 4637187, 'Equities should compound up');
-        assert.ok(categoryTotals['Physical Gold'] > 13000690, 'Gold should compound up');
+        assert.ok(categoryTotals['Equities'] > 3000000, 'Equities should compound up');
+        assert.ok(categoryTotals['Gold'] > 2000000, 'Gold should compound up');
 
         // Total sum of all categories must match total wealthExisting
         const sumTotal = Object.values(categoryTotals).reduce((a, b) => a + b, 0);

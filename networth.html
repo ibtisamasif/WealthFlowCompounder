@@ -475,39 +475,6 @@
             text-decoration: underline;
         }
 
-        /* Stock Live Price Banner */
-        .stock-rate-bar {
-            background: rgba(16, 185, 129, 0.08);
-            border: 1px solid rgba(16, 185, 129, 0.25);
-            border-radius: 14px;
-            padding: 10px 16px;
-            margin-bottom: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .stock-rate-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .stock-rate-info {
-            font-size: 0.78rem;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .stock-rate-info b {
-            color: var(--accent);
-        }
-
         /* Entity Item Cards */
         .entity-card {
             background: var(--raised);
@@ -1176,32 +1143,16 @@
                 <div class="category-header">
                     <div class="category-title">
                         <span>📈</span> Stocks &amp; Equities
-                        <span class="category-badge" id="stockCount">0</span>
+                        <span class="category-badge" id="stockCount" style="display: none;">0</span>
                     </div>
                     <div class="category-total" id="stockTotal">Rs. 0</div>
-                    <button class="btn-add" onclick="addStockRow('', '', '')">+ Add Stock</button>
                 </div>
-
-                <!-- Live PSX Price Engine Banner -->
-                <div class="stock-rate-bar">
-                    <div class="stock-rate-header">
-                        <div class="stock-rate-info">
-                            <span>Engine: <b id="stockApiStatus" style="color: var(--secondary);">Pakistan Stock Exchange (PSX)</b></span>
-                            <span>•</span>
-                            <span id="stockRateTime" style="color: var(--text-dim);">Ready to update</span>
-                        </div>
-                        <div style="display: flex; gap: 8px; align-items: center;">
-                            <button class="btn-add" id="stockUndoBtn" style="display: none; padding: 5px 10px; font-size: 0.72rem; border-color: var(--warning); color: var(--warning);" onclick="undoLastStockPriceUpdate()">
-                                ↩️ Undo Prices
-                            </button>
-                            <button class="btn-action" id="stockFetchBtn" style="padding: 6px 14px; font-size: 0.76rem;" onclick="fetchLiveStockPrices()">
-                                ⚡ Fetch PSX Prices
-                            </button>
-                        </div>
+                <div class="entity-card" style="margin-bottom: 0;">
+                    <div class="entity-main-row" style="gap: 12px; align-items: center;">
+                        <span class="sub-label" style="font-size: 0.82rem; font-weight: 700; color: var(--text-dim); white-space: nowrap;">Total Stocks Worth:</span>
+                        <input type="number" id="stocksTotalInput" min="0" step="any" placeholder="Rs. Total Market Value (e.g. 1500000)" class="sub-input sensitive" style="flex: 1; font-size: 0.95rem; font-weight: 700;" oninput="onStockTotalChange()">
                     </div>
                 </div>
-
-                <div id="stocksContainer"></div>
             </div>
 
             <!-- 4. Real Estate & Land -->
@@ -1689,65 +1640,20 @@
             row.dataset.calculatedValue = total;
         }
 
-        function addStockRow(ticker = '', qty = '', price = '') {
-            const container = document.getElementById('stocksContainer');
-            const row = document.createElement('div');
-            row.className = 'entity-card stock-row';
-            row.id = 'row-' + (++rowIdSeq);
-            row.innerHTML = `
-                <div class="entity-main-row">
-                    <input type="text" placeholder="Stock / Company (e.g. ENGRO)" value="${esc(ticker)}" class="stock-ticker entity-title-input" onchange="onStockTickerChange(this)">
-                    <div class="entity-val-display sensitive stock-row-val">Rs. 0</div>
-                    <button class="btn-remove" onclick="removeRow(this)">&times;</button>
-                </div>
-                <div class="entity-sub-row">
-                    <div class="sub-field">
-                        <span class="sub-label">Shares:</span>
-                        <input type="number" min="0" step="any" placeholder="Qty" value="${qty}" class="stock-qty sub-input num-sm sensitive" oninput="onStockInputChange(this)">
-                    </div>
-                    <div class="sub-field">
-                        <span class="sub-label">Price/Share:</span>
-                        <input type="number" min="0" step="any" placeholder="Rs." value="${price}" class="stock-price sub-input num-md sensitive" oninput="onStockInputChange(this)">
-                    </div>
-                    <div class="sub-rate-tag stock-calc-indicator">Total: Rs. 0</div>
-                </div>
-            `;
-            container.appendChild(row);
-            updateStockRowDisplay(row);
+        function onStockTotalChange() {
             calculateNetWorth();
         }
 
-        function onStockTickerChange(input) {
-            const row = input.closest('.stock-row');
-            if (!row) return;
-            const sym = (input.value || '').trim().toUpperCase().replace(/\.KA$|\.PSX$/, '');
-            const priceInput = row.querySelector('.stock-price');
-            if (STOCK_BENCHMARKS[sym]) {
-                const bm = STOCK_BENCHMARKS[sym];
-                const p = bm.price;
-                if (!priceInput.value || parseFloat(priceInput.value) === 0) {
-                    priceInput.value = p.toFixed(2);
-                    updateStockRowDisplay(row);
-                    calculateNetWorth();
-                    toast(`Filled live PSX price for ${sym}: Rs. ${p.toFixed(2)}`, 'info');
-                }
+        function setStockTotal(val) {
+            const stockInp = document.getElementById('stocksTotalInput');
+            if (stockInp) {
+                stockInp.value = (val !== undefined && val !== null && val !== '') ? val : '';
+                calculateNetWorth();
             }
         }
 
-        function onStockInputChange(el) {
-            const row = el.closest('.stock-row');
-            updateStockRowDisplay(row);
-            calculateNetWorth();
-        }
-
-        function updateStockRowDisplay(row) {
-            const qty = parseFloat(row.querySelector('.stock-qty').value) || 0;
-            const price = parseFloat(row.querySelector('.stock-price').value) || 0;
-            const total = qty * price;
-            row.querySelector('.stock-row-val').innerText = rs(total);
-            const tag = row.querySelector('.stock-calc-indicator');
-            if (tag) tag.innerText = `Total: ${rs(total)}`;
-            row.dataset.calculatedValue = total;
+        function addStockRow(name = '', val = '') {
+            setStockTotal(val);
         }
 
         function addEstateRow(name = '', type = 'Plot', val = '') {
@@ -1922,14 +1828,12 @@
             if (fundCntEl) fundCntEl.innerText = fCount;
 
             // 4. Stocks
-            let sTotal = 0, sCount = 0;
-            document.querySelectorAll('.stock-row').forEach(row => {
-                const val = parseFloat(row.dataset.calculatedValue) || 0;
-                sTotal += val;
-                sCount++;
-            });
-            document.getElementById('stockTotal').innerText = rs(sTotal);
-            document.getElementById('stockCount').innerText = sCount;
+            const stockInp = document.getElementById('stocksTotalInput');
+            const sTotal = stockInp ? (parseFloat(stockInp.value) || 0) : 0;
+            const stockTotEl = document.getElementById('stockTotal');
+            if (stockTotEl) stockTotEl.innerText = rs(sTotal);
+            const stockCntEl = document.getElementById('stockCount');
+            if (stockCntEl) stockCntEl.innerText = sTotal > 0 ? '1' : '0';
 
             // 5. Real Estate
             let eTotal = 0, eCount = 0;
@@ -2336,12 +2240,10 @@
                 val: parseFloat(row.dataset.calculatedValue) || 0
             }));
 
-            document.querySelectorAll('.stock-row').forEach(row => data.stocks.push({
-                ticker: row.querySelector('.stock-ticker').value,
-                qty: row.querySelector('.stock-qty').value,
-                price: row.querySelector('.stock-price').value,
-                val: parseFloat(row.dataset.calculatedValue) || 0
-            }));
+            const stockInp = document.getElementById('stocksTotalInput');
+            const stockVal = stockInp ? (parseFloat(stockInp.value) || 0) : 0;
+            data.stocks = [{ name: 'Stocks & Equities', val: stockVal }];
+            data.stocksTotal = stockVal;
 
             document.querySelectorAll('.estate-row').forEach(row => data.estates.push({
                 name: row.querySelector('.estate-name').value,
@@ -2368,15 +2270,29 @@
             document.getElementById('goldContainer').innerHTML = '';
             const fCont = document.getElementById('fundsContainer');
             if (fCont) fCont.innerHTML = '';
-            document.getElementById('stocksContainer').innerHTML = '';
             document.getElementById('estateContainer').innerHTML = '';
             document.getElementById('cashContainer').innerHTML = '';
             document.getElementById('liabilityContainer').innerHTML = '';
 
+            const stockInp = document.getElementById('stocksTotalInput');
+            if (stockInp) {
+                let val = 0;
+                if (typeof data.stocks === 'number') {
+                    val = data.stocks;
+                } else if (data.stocksTotal !== undefined) {
+                    val = parseFloat(data.stocksTotal) || 0;
+                } else if (Array.isArray(data.stocks)) {
+                    val = data.stocks.reduce((sum, s) => {
+                        const itemVal = s.val !== undefined ? parseFloat(s.val) : ((parseFloat(s.qty) || 0) * (parseFloat(s.price) || 0));
+                        return sum + (itemVal || 0);
+                    }, 0);
+                }
+                stockInp.value = val > 0 ? val : '';
+            }
+
             (data.cars || []).forEach(c => addCarRow(c.make, c.year, c.val));
             (data.gold || []).forEach(g => addGoldRow(g.name, g.karat, g.qty, g.unit));
             (data.funds || []).forEach(f => addFundRow(f.name, f.units, f.nav));
-            (data.stocks || []).forEach(s => addStockRow(s.ticker, s.qty, s.price));
             (data.estates || []).forEach(e => addEstateRow(e.name, e.type, e.val));
             (data.cash || []).forEach(c => addCashRow(c.name, c.cat, c.val));
             (data.liabilities || []).forEach(l => addLiabilityRow(l.name, l.val));
@@ -2537,9 +2453,7 @@
             addGoldRow('21K Family Jewelry', '21K', 5, 'tola');
             addGoldRow('24K Minted Bullion Bar', '24K', 2, 'tola');
             addFundRow('KMIF — Meezan Islamic Fund', 2500, 156.75);
-            addStockRow('ENGRO', 1000, 310);
-            addStockRow('LUCK', 500, 850);
-            addStockRow('SYS', 1200, 420);
+            setStockTotal(1500000);
             addEstateRow('DHA Phase 6 Plot 450', 'Plot', 22000000);
             addCashRow('Meezan Bank Checking', 'Bank Account', 1200000);
             addCashRow('USD Cash Reserve', 'Cash', 850000);
@@ -2573,7 +2487,6 @@
             // Render History & Chart
             renderHistory();
             checkSavedStatus();
-            updateStockApiStatus();
 
             // Chart interactions
             const chartWrap = document.getElementById('chartWrap');
@@ -2583,313 +2496,6 @@
             // Fetch live rates silently in background
             fetchLiveRates();
         };
-
-        /* ---------------------------------------------------------------
-        /* ---------------------------------------------------------------
-           Pakistan Stock Exchange (PSX) Live Price Engine
-           --------------------------------------------------------------- */
-        let lastStockPricesBackup = null;
-
-        // Accurate live 2026 Pakistan Stock Exchange quotes matching Investify & KTrade
-        const STOCK_BENCHMARKS = {
-            'SYS': { 
-                price: 114.37, 
-                name: 'Systems Limited', 
-                splitRatio: 5,
-                note: '5-for-1 stock split executed May 31, 2025 (Rs 10 to Rs 2 par value). Current live market price is ~114-116. If your entered quantity is pre-split, click to multiply shares by 5!'
-            },
-            'SAZEW': { 
-                price: 1657.90, 
-                name: 'Sazgar Engineering Works', 
-                note: 'Current live PSX market price (~1,657.90 - 1,661)'
-            },
-            'MEBL': { 
-                price: 548.11, 
-                name: 'Meezan Bank Ltd', 
-                note: 'Surged to all-time highs (~548) from earlier ~240 levels'
-            },
-            'LUCK': { 
-                price: 410.56, 
-                name: 'Lucky Cement', 
-                note: 'Live PSX market price (~410.56)'
-            },
-            'FFC': { 
-                price: 537.90, 
-                name: 'Fauji Fertilizer Co', 
-                note: 'Live PSX market price (~537.90)'
-            },
-            'OGDC': { price: 309.90, name: 'Oil & Gas Dev Co', note: 'Live PSX market price (~309.90)' },
-            'HUBC': { price: 196.01, name: 'Hub Power Company', note: 'Live PSX market price (~196.01)' },
-            'ENGRO': { price: 262.13, name: 'Engro Holdings', note: 'Live PSX market price (~262.13)' },
-            'ENGROH': { price: 262.13, name: 'Engro Holdings', note: 'Live PSX market price (~262.13)' },
-            'MARI': { 
-                price: 630.00, 
-                name: 'Mari Petroleum', 
-                note: '800% bonus share issue executed in 2024'
-            },
-            'EFERT': { price: 195.00, name: 'Engro Fertilizers', note: 'Live PSX market price (~195.00)' },
-            'SLM': { 
-                price: 22.32, 
-                name: 'Service Long March Tyres', 
-                note: 'Live PSX market price (~22.32)'
-            },
-            'POL': { price: 691.30, name: 'Pakistan Oilfields Ltd' },
-            'ATRL': { price: 1189.43, name: 'Attock Refinery Limited' },
-            'AIRLINK': { price: 120.30, name: 'Air Link Communication' },
-            'AVN': { price: 27.62, name: 'Avanceon Limited' },
-            'MLCF': { price: 100.65, name: 'Maple Leaf Cement' },
-            'BAHL': { price: 151.55, name: 'Bank AL Habib Limited' },
-            'BAFL': { price: 56.67, name: 'Bank Alfalah Limited' },
-            'INDU': { price: 1804.88, name: 'Indus Motor Company' },
-            'MTL': { price: 297.05, name: 'Millat Tractors Limited' },
-            'PRL': { price: 87.42, name: 'Pakistan Refinery Limited' },
-            'CNERGY': { price: 12.21, name: 'Cnergyico PK Limited' },
-            'WTL': { price: 0.99, name: 'Worldcall Telecom' },
-            'PTC': { price: 59.40, name: 'PTCL' },
-            'PAEL': { price: 34.90, name: 'Pak Elektron Limited' },
-            'KEL': { price: 5.62, name: 'K-Electric Limited' },
-            'SNGP': { price: 90.92, name: 'Sui Northern Gas Pipelines' },
-            'SSGC': { price: 13.85, name: 'Sui Southern Gas Co' },
-            'TRG': { price: 56.50, name: 'TRG Pakistan' },
-            'PPL': { price: 165.20, name: 'Pakistan Petroleum' },
-            'HBL': { price: 172.00, name: 'Habib Bank Limited' },
-            'SEARL': { price: 82.50, name: 'The Searle Company' },
-            'ILP': { price: 62.00, name: 'Interloop Limited' },
-            'CHCC': { price: 245.00, name: 'Cherat Cement' },
-            'FCCL': { price: 38.50, name: 'Fauji Cement' },
-            'DGKC': { price: 112.00, name: 'D.G. Khan Cement' },
-            'PIOC': { price: 152.00, name: 'Pioneer Cement' },
-            'KOHC': { price: 280.00, name: 'Kohat Cement' },
-            'NRL': { price: 612.00, name: 'National Refinery Limited' },
-            'FABL': { price: 48.50, name: 'Faysal Bank Limited' },
-            'BIPL': { price: 28.30, name: 'BankIslami Pakistan' },
-            'AKBL': { price: 39.50, name: 'Askari Bank Limited' },
-            'SNBL': { price: 18.20, name: 'Soneri Bank Limited' },
-            'JSBL': { price: 12.40, name: 'JS Bank Limited' },
-            'BOP': { price: 7.85, name: 'Bank of Punjab' },
-            'FATIMA': { price: 58.20, name: 'Fatima Fertilizer' },
-            'EPCL': { price: 38.40, name: 'Engro Polymer & Chemicals' },
-            'LOTCHEM': { price: 18.60, name: 'Lotte Chemical Pakistan' },
-            'UNITY': { price: 21.50, name: 'Unity Foods Limited' },
-            'GTYR': { price: 54.00, name: 'Ghandhara Tyre & Rubber' },
-            'GHNI': { price: 84.50, name: 'Ghani Glass Limited' },
-            'GHNL': { price: 72.00, name: 'Ghandhara Industries' },
-            'HCAR': { price: 268.00, name: 'Honda Atlas Cars' },
-            'AGTL': { price: 420.00, name: 'Al-Ghazi Tractors' },
-            'KAPCO': { price: 31.50, name: 'Kot Addu Power' },
-            'NCPL': { price: 28.20, name: 'Nishat Chunian Power' },
-            'NPL': { price: 26.50, name: 'Nishat Power' },
-            'SPWL': { price: 29.80, name: 'Saif Power Limited' },
-            'AGP': { price: 118.00, name: 'AGP Limited' },
-            'GLAXO': { price: 168.00, name: 'GlaxoSmithKline Pakistan' },
-            'ABOT': { price: 720.00, name: 'Abbott Laboratories' },
-            'NATF': { price: 185.00, name: 'National Foods Limited' },
-            'NESTLE': { price: 6800.00, name: 'Nestle Pakistan' },
-            'FHAM': { price: 105.00, name: 'FrieslandCampina Engro' },
-            'TPLP': { price: 14.50, name: 'TPL Properties' },
-            'OCTOPUS': { price: 78.00, name: 'Octopus Digital' },
-            'TELE': { price: 7.20, name: 'Telecard Limited' },
-            'FLYNG': { price: 12.80, name: 'Flying Cement' }
-        };
-
-        async function fetchLiveStockPrices() {
-            const btn = document.getElementById('stockFetchBtn');
-            const rows = document.querySelectorAll('.stock-row');
-            if (!rows.length) {
-                return toast('Add at least one PSX stock first!', 'info');
-            }
-
-            btn.disabled = true;
-            btn.innerText = '⏳ Fetching…';
-            toast('Fetching live PSX quotes…', 'info');
-
-            const fetchedUpdates = [];
-
-            for (const row of rows) {
-                const tickerInput = row.querySelector('.stock-ticker');
-                const priceInput = row.querySelector('.stock-price');
-                const sharesInput = row.querySelector('.stock-qty') || row.querySelector('.stock-shares');
-                const rawTicker = (tickerInput.value || '').trim();
-                if (!rawTicker) continue;
-
-                const sym = rawTicker.toUpperCase().replace(/\.KA$|\.PSX$/, '');
-                const currentPrice = parseFloat(priceInput.value) || 0;
-                const currentShares = parseFloat(sharesInput.value) || 0;
-                const bm = STOCK_BENCHMARKS[sym];
-
-                if (bm && bm.price > 0) {
-                    fetchedUpdates.push({
-                        row,
-                        sym,
-                        name: bm.name || sym,
-                        currentPrice,
-                        currentShares,
-                        fetchedPrice: bm.price,
-                        note: bm.note || '',
-                        splitRatio: bm.splitRatio || null
-                    });
-                }
-            }
-
-            btn.disabled = false;
-            btn.innerText = '⚡ Fetch PSX Prices';
-
-            if (!fetchedUpdates.length) {
-                return toast('No PSX matches found for entered tickers. You can type prices manually.', 'info');
-            }
-
-            // Open interactive confirmation preview modal
-            openStockPriceReviewModal(fetchedUpdates);
-        }
-
-        function openStockPriceReviewModal(updates) {
-            const backdrop = document.createElement('div');
-            backdrop.className = 'modal-backdrop';
-
-            let rowsHtml = '';
-            updates.forEach((u, i) => {
-                const diffPct = u.currentPrice > 0 ? (((u.fetchedPrice - u.currentPrice) / u.currentPrice) * 100).toFixed(1) : 0;
-                const isPositive = diffPct > 0;
-                const isBigDrop = diffPct < -40;
-
-                let specialNotice = '';
-                if (u.splitRatio && u.splitRatio > 1 && isBigDrop) {
-                    const adjShares = Math.round(u.currentShares * u.splitRatio);
-                    specialNotice = `
-                        <div style="margin-top: 8px; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 8px; padding: 8px 12px; font-size: 0.73rem; color: var(--text-main);">
-                            <div style="font-weight: 700; color: var(--warning); margin-bottom: 2px;">⚠️ Corporate Action: 5:1 Stock Split (May 2025)</div>
-                            <div>Par value was split from Rs 10 to Rs 2. The live PSX price is ~Rs. 114.37. If your entered quantity (${u.currentShares.toLocaleString()}) was purchased pre-split, your broker credited 5× shares!</div>
-                            ${u.currentShares > 0 ? `
-                                <button type="button" class="btn-add" style="margin-top: 6px; padding: 4px 10px; font-size: 0.72rem; border-color: var(--warning); color: var(--warning);" onclick="adjustRowSharesForSplit(${i}, ${adjShares})">
-                                    ⚡ Update Shares to ${adjShares.toLocaleString()} (${u.currentShares.toLocaleString()} × 5)
-                                </button>
-                            ` : ''}
-                        </div>
-                    `;
-                } else if (u.note) {
-                    specialNotice = `
-                        <div style="margin-top: 6px; font-size: 0.72rem; color: var(--text-dim); line-height: 1.4;">
-                            ℹ️ ${esc(u.note)}
-                        </div>
-                    `;
-                }
-
-                rowsHtml += `
-                    <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 10px;">
-                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
-                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 800; font-size: 0.95rem;">
-                                <input type="checkbox" id="stockChk_${i}" checked style="width: 17px; height: 17px; cursor: pointer;">
-                                <span>${esc(u.sym)} <span style="font-weight: 400; font-size: 0.75rem; color: var(--text-dim);">(${esc(u.name)})</span></span>
-                            </label>
-                            <div style="text-align: right;">
-                                <span style="font-size: 0.75rem; color: var(--text-dim); text-decoration: line-through; margin-right: 6px;">
-                                    Rs. ${u.currentPrice.toFixed(2)}
-                                </span>
-                                <span style="font-size: 0.95rem; font-weight: 800; color: var(--primary);">
-                                    Rs. ${u.fetchedPrice.toFixed(2)}
-                                </span>
-                                ${u.currentPrice > 0 ? `
-                                    <span style="display: inline-block; margin-left: 6px; padding: 2px 6px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; background: ${isPositive ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)'}; color: ${isPositive ? 'var(--secondary)' : 'var(--danger)'};">
-                                        ${isPositive ? '+' : ''}${diffPct}%
-                                    </span>
-                                ` : ''}
-                            </div>
-                        </div>
-                        ${specialNotice}
-                    </div>
-                `;
-            });
-
-            backdrop.innerHTML = `
-                <div class="modal-box" style="max-width: 540px; max-height: 90vh; overflow-y: auto;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-                        <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0;">⚡ Review PSX Market Prices</h3>
-                        <span style="font-size: 0.72rem; color: var(--text-dim);">PSX Live Feed (Investify / KTrade)</span>
-                    </div>
-                    <p style="font-size: 0.78rem; color: var(--text-dim); margin-bottom: 16px; line-height: 1.5;">
-                        Review the latest Pakistan Stock Exchange prices below. Uncheck any stock you wish to keep unchanged.
-                    </p>
-                    <div id="stockUpdatesList">
-                        ${rowsHtml}
-                    </div>
-                    <div class="modal-actions" style="margin-top: 18px; display: flex; gap: 8px; justify-content: flex-end;">
-                        <button class="btn-action btn-secondary" id="modalCancelStockBtn">Keep My Current Prices</button>
-                        <button class="btn-action" id="modalApplyStockBtn">✓ Apply Selected PSX Prices</button>
-                    </div>
-                </div>
-            `;
-
-            document.body.appendChild(backdrop);
-            requestAnimationFrame(() => backdrop.classList.add('show'));
-
-            const close = () => {
-                backdrop.classList.remove('show');
-                setTimeout(() => backdrop.remove(), 200);
-            };
-
-            backdrop.querySelector('#modalCancelStockBtn').onclick = close;
-
-            // Split adjust helper attached to window for inline onclick
-            window.adjustRowSharesForSplit = (idx, newShares) => {
-                const item = updates[idx];
-                if (item && item.row) {
-                    const sharesInput = item.row.querySelector('.stock-qty') || item.row.querySelector('.stock-shares');
-                    if (sharesInput) {
-                        sharesInput.value = newShares;
-                        item.currentShares = newShares;
-                        updateStockRowDisplay(item.row);
-                        calculateNetWorth();
-                        toast(`Updated ${item.sym} shares to ${newShares.toLocaleString()}`, 'success');
-                    }
-                }
-            };
-
-            backdrop.querySelector('#modalApplyStockBtn').onclick = () => {
-                // Save backup for 1-click Undo
-                const backup = {};
-                document.querySelectorAll('.stock-row').forEach(r => {
-                    const s = (r.querySelector('.stock-ticker').value || '').trim().toUpperCase();
-                    const p = r.querySelector('.stock-price').value;
-                    if (s) backup[s] = p;
-                });
-                lastStockPricesBackup = backup;
-
-                let applied = 0;
-                updates.forEach((u, i) => {
-                    const chk = backdrop.querySelector(`#stockChk_${i}`);
-                    if (chk && chk.checked) {
-                        const priceInput = u.row.querySelector('.stock-price');
-                        priceInput.value = u.fetchedPrice.toFixed(2);
-                        updateStockRowDisplay(u.row);
-                        applied++;
-                    }
-                });
-
-                close();
-                document.getElementById('stockRateTime').innerText = 'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                document.getElementById('stockUndoBtn').style.display = 'inline-block';
-                calculateNetWorth();
-                toast(`Applied live PSX prices for ${applied} stock(s). Click "↩️ Undo Prices" anytime to revert.`, 'success');
-            };
-        }
-
-        function undoLastStockPriceUpdate() {
-            if (!lastStockPricesBackup) return;
-            const rows = document.querySelectorAll('.stock-row');
-            let restored = 0;
-            rows.forEach(row => {
-                const sym = (row.querySelector('.stock-ticker').value || '').trim().toUpperCase();
-                if (lastStockPricesBackup[sym] !== undefined) {
-                    row.querySelector('.stock-price').value = lastStockPricesBackup[sym];
-                    updateStockRowDisplay(row);
-                    restored++;
-                }
-            });
-            document.getElementById('stockUndoBtn').style.display = 'none';
-            lastStockPricesBackup = null;
-            calculateNetWorth();
-            toast(`Restored previous prices for ${restored} stock(s).`, 'info');
-        }
     </script>
 </body>
 
