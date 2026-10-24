@@ -1488,7 +1488,7 @@
                 <dl class="gloss">
                     <div>
                         <dt>Save / Load</dt>
-                        <dd>Keeps your setup in this browser so you can come back to it.</dd>
+                        <dd>Keeps your setup in this browser and restores it automatically on the next visit (unless a Share link is open).</dd>
                     </div>
                     <div>
                         <dt>Share</dt>
@@ -2353,8 +2353,16 @@
         }
 
         function loadSaved() {
-            const saved = localStorage.getItem(saveKey);
-            if (saved) applyState(JSON.parse(saved));
+            let saved;
+            try { saved = localStorage.getItem(saveKey); } catch (e) { return false; }
+            if (!saved) return false;
+            try {
+                applyState(JSON.parse(saved));
+                return true;
+            } catch (e) {
+                console.warn('Saved scenario is invalid JSON:', e);
+                return false;
+            }
         }
 
         function checkSavedStatus() {
@@ -2646,6 +2654,8 @@
 
         async function resetAll() {
             if (await customConfirm('Reset current inputs to default?')) {
+                // Skip localStorage restore on the next load so Clear still shows defaults.
+                try { sessionStorage.setItem('wealth_skip_autoload', '1'); } catch (e) { }
                 location.hash = '';
                 location.reload();
             }
@@ -3394,12 +3404,19 @@
             }
         }
 
-        window.onload = () => {
+        window.onload = async () => {
             applyTheme(ld('wealth_theme') === 'light');
             document.getElementById('maskBtn').innerHTML = ICON.eye;
             document.getElementById('rateBtn').innerHTML = ICON.refresh;
             buildSliders();
-            loadFromHash();
+            let skipAutoload = false;
+            try {
+                skipAutoload = sessionStorage.getItem('wealth_skip_autoload') === '1';
+                if (skipAutoload) sessionStorage.removeItem('wealth_skip_autoload');
+            } catch (e) { }
+            // Share links win; otherwise restore the last saved scenario (including DevTools edits).
+            const fromHash = await loadFromHash();
+            if (!fromHash && !skipAutoload) loadSaved();
             checkSavedStatus();
             checkSyncedSavings();
             renderNetWorthSuggestions();
