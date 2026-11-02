@@ -2927,12 +2927,15 @@
             return { state, totals, totalAssets, liabilities, netWorth, portfolioBase, categories };
         }
 
-        // Scale a gross holding so portfolio amounts match net worth while % stays asset-based.
-        function scaleToPortfolioBase(val, nw) {
-            const assets = nw.totalAssets || 0;
-            const base = nw.portfolioBase || nw.netWorth || assets;
-            if (!(assets > 0) || !(base > 0)) return val;
-            return val * (base / assets);
+        // Sync Current Savings to true net worth when pulling the asset split from the tracker.
+        function syncSavingsFromNetWorth(nw, { silent = false } = {}) {
+            if (!nw) return;
+            const val = nw.portfolioBase || nw.netWorth || 0;
+            if (!(val > 0)) return;
+            const el = document.getElementById('savings');
+            if (!el) return;
+            el.value = Math.round(val);
+            if (!silent) toast('Current savings set to net worth: ' + rs(val), 'info');
         }
 
         function normalizePercentages(items) {
@@ -3037,12 +3040,11 @@
                     chip.type = 'button';
                     chip.className = 'nw-chip';
                     const weight = Number(((it.val / nw.totalAssets) * 100).toFixed(1));
-                    const scaled = scaleToPortfolioBase(it.val, nw);
-                    chip.title = `Add ${it.detail} — ${rs(scaled)} (${weight}% of net worth)`;
-                    chip.innerHTML = `<span>${it.icon}</span> <span>${it.name} (${compact(scaled)})</span>`;
+                    chip.title = `Add ${it.detail} — ${rs(it.val)} (${weight}% of assets)`;
+                    chip.innerHTML = `<span>${it.icon}</span> <span>${it.name} (${compact(it.val)})</span>`;
                     chip.onclick = () => {
-                        lastKnownPortfolioBase = nw.portfolioBase;
-                        addInvestmentRow(it.name, Math.round(scaled), weight, it.expectedReturn);
+                        lastKnownPortfolioBase = nw.totalAssets;
+                        addInvestmentRow(it.name, Math.round(it.val), weight, it.expectedReturn);
                     };
                     freshChipsList.appendChild(chip);
                 });
@@ -3054,7 +3056,7 @@
                 normalized.forEach(c => {
                     const opt = document.createElement('option');
                     opt.value = c.name;
-                    opt.label = `${c.weight}% Net Worth share, ~${c.expectedReturn}% Return (${rs(c.val)})`;
+                    opt.label = `${c.weight}% of assets, ~${c.expectedReturn}% Return (${rs(c.val)})`;
                     datalist.appendChild(opt);
                 });
 
@@ -3063,8 +3065,7 @@
                         const opt = document.createElement('option');
                         opt.value = it.name;
                         const weight = Number(((it.val / nw.totalAssets) * 100).toFixed(1));
-                        const scaled = scaleToPortfolioBase(it.val, nw);
-                        opt.label = `${it.detail} — ${compact(scaled)} (${weight}%, ${it.expectedReturn}% Return)`;
+                        opt.label = `${it.detail} — ${compact(it.val)} (${weight}%, ${it.expectedReturn}% Return)`;
                         datalist.appendChild(opt);
                     });
                 });
@@ -3093,7 +3094,7 @@
                     if (val === iname || val === idetail || (val.length > 2 && (iname.includes(val) || idetail.includes(val)))) {
                         matched = {
                             name: item.name,
-                            val: scaleToPortfolioBase(item.val, nw),
+                            val: item.val,
                             weight: Number(((item.val / nw.totalAssets) * 100).toFixed(1)),
                             expectedReturn: item.expectedReturn
                         };
@@ -3117,7 +3118,7 @@
                 if (foundCat) {
                     matched = {
                         name: foundCat.name,
-                        val: scaleToPortfolioBase(foundCat.val, nw),
+                        val: foundCat.val,
                         weight: foundCat.weight,
                         expectedReturn: foundCat.expectedReturn
                     };
@@ -3139,7 +3140,7 @@
                     changed = true;
                 }
                 if (changed) {
-                    lastKnownPortfolioBase = nw.portfolioBase;
+                    lastKnownPortfolioBase = nw.totalAssets;
                     calculate();
                     toast(`Auto-filled ${matched.name} (${compact(matched.val)}, ${matched.weight}%, ~${matched.expectedReturn}%)`, 'info');
                 }
@@ -3152,8 +3153,8 @@
             const normalized = normalizePercentages(nw.categories);
             const cat = normalized.find(c => c.id === catId);
             if (cat) {
-                lastKnownPortfolioBase = nw.portfolioBase;
-                addInvestmentRow(cat.name, Math.round(scaleToPortfolioBase(cat.val, nw)), cat.weight, cat.expectedReturn);
+                lastKnownPortfolioBase = nw.totalAssets;
+                addInvestmentRow(cat.name, Math.round(cat.val), cat.weight, cat.expectedReturn);
                 toast(`Added ${cat.name} (${cat.weight}%) from Net Worth Tracker`, 'info');
             }
         }
@@ -3164,15 +3165,20 @@
                 toast('No assets found in Net Worth Tracker yet. Add your gold, stocks, car, or real estate in Net Worth Tracker first!', 'warning');
                 return;
             }
+            // Keep real tracker amounts (Leaf = 55 Lac, etc.). Current Savings stays net worth.
+            syncSavingsFromNetWorth(nw, { silent: true });
             const normalized = normalizePercentages(nw.categories);
-            lastKnownPortfolioBase = nw.portfolioBase;
+            lastKnownPortfolioBase = nw.totalAssets;
             const container = document.getElementById('investmentsContainer');
             container.innerHTML = '';
             normalized.forEach(c => {
-                addInvestmentRow(c.name, Math.round(scaleToPortfolioBase(c.val, nw)), c.weight, c.expectedReturn);
+                addInvestmentRow(c.name, Math.round(c.val), c.weight, c.expectedReturn);
             });
             calculate();
-            toast(`⚡ Auto-filled 100% portfolio split from your Net Worth (${rs(nw.portfolioBase)})!`, 'success');
+            const debtNote = nw.liabilities > 0
+                ? ` Assets ${rs(nw.totalAssets)} − debt ${rs(nw.liabilities)} = net ${rs(nw.portfolioBase)}.`
+                : '';
+            toast(`⚡ Auto-filled asset split from tracker.${debtNote}`, 'success');
         }
 
         function autoFillAllNetWorthItems() {
@@ -3188,12 +3194,13 @@
                 toast('No individual holdings found in Net Worth Tracker.', 'warning');
                 return;
             }
+            syncSavingsFromNetWorth(nw, { silent: true });
             const normalized = normalizePercentages(allItems);
-            lastKnownPortfolioBase = nw.portfolioBase;
+            lastKnownPortfolioBase = nw.totalAssets;
             const container = document.getElementById('investmentsContainer');
             container.innerHTML = '';
             normalized.forEach(it => {
-                addInvestmentRow(it.name, Math.round(scaleToPortfolioBase(it.val, nw)), it.weight, it.expectedReturn);
+                addInvestmentRow(it.name, Math.round(it.val), it.weight, it.expectedReturn);
             });
             calculate();
             toast(`⚡ Auto-filled ${normalized.length} individual holdings from Net Worth!`, 'success');
@@ -3234,45 +3241,39 @@
             });
             const normalizedItems = normalizePercentages(allItems);
 
-            let catRowsHtml = normalizedCats.map(c => {
-                const scaled = Math.round(scaleToPortfolioBase(c.val, nw));
-                return `
+            let catRowsHtml = normalizedCats.map(c => `
                 <tr>
                     <td style="font-weight: 700;">
                         <span style="margin-right: 6px;">${c.icon}</span> ${esc(c.name)}
                         <div style="font-size: 0.7rem; color: var(--text-dim); margin-top: 2px;">${c.items.length} item(s) logged</div>
                     </td>
-                    <td style="font-weight: 700;">${rs(scaled)}</td>
+                    <td style="font-weight: 700;">${rs(c.val)}</td>
                     <td><span class="nw-badge green">${c.weight}%</span></td>
                     <td><span class="nw-badge gold">${c.expectedReturn}% / yr</span></td>
                     <td style="text-align: right;">
-                        <button type="button" class="btn-add" style="padding: 4px 8px; font-size: 0.72rem;" onclick="lastKnownPortfolioBase = ${nw.portfolioBase}; addInvestmentRow('${esc(c.name)}', ${scaled}, ${c.weight}, ${c.expectedReturn}); toast('Added ${esc(c.name)}', 'info');">
+                        <button type="button" class="btn-add" style="padding: 4px 8px; font-size: 0.72rem;" onclick="lastKnownPortfolioBase = ${nw.totalAssets}; addInvestmentRow('${esc(c.name)}', ${Math.round(c.val)}, ${c.weight}, ${c.expectedReturn}); toast('Added ${esc(c.name)}', 'info');">
                             + Add
                         </button>
                     </td>
                 </tr>
-            `;
-            }).join('');
+            `).join('');
 
-            let itemRowsHtml = normalizedItems.map(it => {
-                const scaled = Math.round(scaleToPortfolioBase(it.val, nw));
-                return `
+            let itemRowsHtml = normalizedItems.map(it => `
                 <tr>
                     <td style="font-weight: 700;">
                         <span style="margin-right: 6px;">${it.icon}</span> ${esc(it.name)}
                         <div style="font-size: 0.7rem; color: var(--text-dim); margin-top: 2px;">${esc(it.detail)}</div>
                     </td>
-                    <td style="font-weight: 700;">${rs(scaled)}</td>
+                    <td style="font-weight: 700;">${rs(it.val)}</td>
                     <td><span class="nw-badge green">${it.weight}%</span></td>
                     <td><span class="nw-badge gold">${it.expectedReturn}% / yr</span></td>
                     <td style="text-align: right;">
-                        <button type="button" class="btn-add" style="padding: 4px 8px; font-size: 0.72rem;" onclick="lastKnownPortfolioBase = ${nw.portfolioBase}; addInvestmentRow('${esc(it.name)}', ${scaled}, ${it.weight}, ${it.expectedReturn}); toast('Added ${esc(it.name)}', 'info');">
+                        <button type="button" class="btn-add" style="padding: 4px 8px; font-size: 0.72rem;" onclick="lastKnownPortfolioBase = ${nw.totalAssets}; addInvestmentRow('${esc(it.name)}', ${Math.round(it.val)}, ${it.weight}, ${it.expectedReturn}); toast('Added ${esc(it.name)}', 'info');">
                             + Add
                         </button>
                     </td>
                 </tr>
-            `;
-            }).join('');
+            `).join('');
 
             backdrop.innerHTML = `
                 <div class="modal-box modal-lg">
@@ -3280,8 +3281,8 @@
                         <div>
                             <div class="nw-modal-title">⚡ Net Worth Portfolio Suggestions</div>
                             <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 3px;">
-                                Net worth: <strong style="color: var(--secondary);">${rs(nw.portfolioBase)}</strong>
-                                ${nw.liabilities > 0 ? ` · assets ${rs(nw.totalAssets)} − debt ${rs(nw.liabilities)}` : ''}
+                                Tracker amounts (gross assets <strong style="color: var(--secondary);">${rs(nw.totalAssets)}</strong>)
+                                ${nw.liabilities > 0 ? ` · debt ${rs(nw.liabilities)} · net worth ${rs(nw.portfolioBase)}` : ''}
                             </div>
                         </div>
                         <button type="button" class="btn-icon" style="border: none; font-size: 1.3rem; line-height: 1; cursor: pointer; color: var(--text-dim);" onclick="this.closest('.modal-backdrop').remove()">&times;</button>

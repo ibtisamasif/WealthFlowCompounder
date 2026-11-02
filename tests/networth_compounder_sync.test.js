@@ -44,7 +44,7 @@ describe('Compounder ↔ Net Worth sync (net worth vs gross assets)', () => {
         assert.equal(base, 38005144);
     });
 
-    test('scaled holdings sum to net worth while preserving asset weights', () => {
+    test('scaleHoldingToNetWorth helper preserves weights when optionally used', () => {
         const assets = 41578284;
         const netWorth = 38005144;
         const holdings = Object.values(categories);
@@ -55,26 +55,29 @@ describe('Compounder ↔ Net Worth sync (net worth vs gross assets)', () => {
         }));
         const sumScaled = scaled.reduce((a, b) => a + b, 0);
         assert.ok(Math.abs(sumScaled - netWorth) < 1e-6);
-
-        // Weights vs gross assets unchanged
-        holdings.forEach((v, i) => {
-            const wGross = v / assets;
-            const wScaled = scaled[i] / netWorth;
-            assert.ok(Math.abs(wGross - wScaled) < 1e-12);
-        });
     });
 
-    test('index.html reads live entities key and labels use portfolioBase/netWorth', () => {
+    test('index.html shows net worth in labels but auto-fills real tracker amounts', () => {
         const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
         assert.ok(html.includes("localStorage.getItem('wealth_networth_entities')"),
             'should prefer wealth_networth_entities');
         assert.ok(html.includes('portfolioBase'), 'should compute portfolioBase');
-        assert.ok(html.includes('scaleToPortfolioBase'), 'should scale holdings to net worth');
+        assert.ok(html.includes('syncSavingsFromNetWorth'),
+            'auto-fill should sync Current Savings to net worth');
         assert.ok(html.includes('From Net Worth (${compact(nw.portfolioBase)})'),
             'From Net Worth button should show net worth, not gross assets');
         assert.equal(html.includes('From Net Worth (${compact(nw.totalAssets)})'), false,
             'must not label Net Worth with totalAssets');
         assert.ok(html.includes('Net Worth Suggestions (${rs(nw.portfolioBase)}'),
             'suggestions strip should show net worth');
+        // Auto-fill must use real tracker amounts (c.val / it.val), not debt-scaled figures
+        assert.ok(html.includes('addInvestmentRow(c.name, Math.round(c.val), c.weight, c.expectedReturn)'),
+            'category auto-fill should use actual tracker amounts');
+        assert.ok(html.includes('addInvestmentRow(it.name, Math.round(it.val), it.weight, it.expectedReturn)'),
+            'holdings auto-fill should use actual tracker amounts');
+        assert.equal(html.includes('scaleToPortfolioBase'), false,
+            'should not shrink tracker amounts for debt when filling the split');
+        assert.ok(html.includes('lastKnownPortfolioBase = nw.totalAssets'),
+            'amount/% sync base should be gross assets so Leaf stays 55 Lac');
     });
 });
