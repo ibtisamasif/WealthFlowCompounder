@@ -226,6 +226,36 @@ function computeNetWorth({ categories = {}, liabilities = 0 }) {
     return { grossAssets, netWorth, liabilities };
 }
 
+/**
+ * Resolves the portfolio base used when syncing Net Worth → Compounder.
+ * Prefer true net worth (assets − liabilities). Fall back to gross assets
+ * only when net worth is missing/non-positive.
+ */
+function resolveNetWorthPortfolioBase({ totalAssets = 0, netWorth, liabilities = 0 } = {}) {
+    const assets = Math.max(0, parseFloat(totalAssets) || 0);
+    let nw = parseFloat(netWorth);
+    // Derive when net worth was omitted (undefined/null) or non-finite.
+    // Explicit 0 is kept as-is and falls through to the assets fallback below.
+    if (netWorth == null || !Number.isFinite(nw)) {
+        nw = assets - Math.max(0, parseFloat(liabilities) || 0);
+    }
+    if (nw > 0) return nw;
+    return assets;
+}
+
+/**
+ * Scales a gross asset holding amount down to the net-worth base so
+ * portfolio row amounts sum to Current Savings (net worth), while
+ * % weights stay based on gross asset composition.
+ */
+function scaleHoldingToNetWorth(holdingVal, { totalAssets = 0, netWorth = 0, liabilities = 0 } = {}) {
+    const assets = Math.max(0, parseFloat(totalAssets) || 0);
+    const base = resolveNetWorthPortfolioBase({ totalAssets: assets, netWorth, liabilities });
+    const val = Math.max(0, parseFloat(holdingVal) || 0);
+    if (!(assets > 0) || !(base > 0)) return val;
+    return val * (base / assets);
+}
+
 module.exports = {
     MAX_YEARS,
     WITHDRAW,
@@ -238,5 +268,7 @@ module.exports = {
     full,
     rs,
     getGoldRate,
-    computeNetWorth
+    computeNetWorth,
+    resolveNetWorthPortfolioBase,
+    scaleHoldingToNetWorth
 };
