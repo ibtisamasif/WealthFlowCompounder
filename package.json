@@ -4,7 +4,7 @@
   "description": "WealthFlow Compounder and Daily Net Worth Tracker",
   "private": true,
   "scripts": {
-    "test": "node --test tests/",
+    "test": "node --test tests/*.test.js",
     "pr": "node scripts/create_pr.js",
     "serve": "python3 -m http.server 8000"
   },

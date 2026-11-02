@@ -99,7 +99,7 @@ function getRepoConfig() {
 function runTests() {
     console.log('🧪 Running automated test suite before PR generation...');
     try {
-        const output = run('node --test tests/', { stdio: 'pipe' });
+        const output = run('npm test', { stdio: 'pipe' });
         console.log(output);
         return { success: true, output };
     } catch (err) {
