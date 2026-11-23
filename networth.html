@@ -1013,6 +1013,332 @@
             gap: 10px;
             justify-content: flex-end;
         }
+
+        /* History Change Insights Trigger & Floating Balloon Popover */
+        .change-insight-trigger {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: transparent;
+            border: none;
+            padding: 3px 7px;
+            margin: -3px -7px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: inherit;
+            font-weight: 700;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+            text-align: left;
+        }
+
+        .change-insight-trigger.is-pos {
+            color: #34d399;
+        }
+
+        .change-insight-trigger.is-neg {
+            color: #f87171;
+        }
+
+        .change-insight-trigger.is-neutral {
+            color: var(--text-dim);
+            font-weight: 600;
+        }
+
+        [data-theme="light"] .change-insight-trigger.is-pos {
+            color: #047857;
+        }
+
+        [data-theme="light"] .change-insight-trigger.is-neg {
+            color: #dc2626;
+        }
+
+        .change-insight-trigger .insight-label {
+            border-bottom: 1px dashed currentColor;
+            padding-bottom: 1px;
+        }
+
+        .change-insight-trigger.is-neutral .insight-label {
+            border-bottom-color: rgba(148, 163, 184, 0.45);
+        }
+
+        .change-insight-trigger .insight-cue {
+            font-size: 0.7rem;
+            opacity: 0.55;
+            line-height: 1;
+            transition: opacity 0.15s ease, transform 0.15s ease;
+        }
+
+        .change-insight-trigger:hover,
+        .change-insight-trigger:focus-visible,
+        .change-insight-trigger[aria-expanded="true"] {
+            background: var(--primary-glow);
+            outline: none;
+        }
+
+        .change-insight-trigger:focus-visible {
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .change-insight-trigger:hover .insight-cue,
+        .change-insight-trigger:focus-visible .insight-cue,
+        .change-insight-trigger[aria-expanded="true"] .insight-cue {
+            opacity: 1;
+            transform: scale(1.08);
+        }
+
+        .history-insight-popover {
+            position: fixed;
+            z-index: 1200;
+            width: 310px;
+            max-width: calc(100vw - 24px);
+            background: #131a2b;
+            color: var(--text-main);
+            border: 1px solid rgba(148, 163, 184, 0.24);
+            border-radius: 16px;
+            padding: 14px 16px;
+            box-shadow: 0 20px 44px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(129, 140, 248, 0.12);
+            opacity: 0;
+            transform: translateY(4px) scale(0.98);
+            transition: opacity 0.15s ease, transform 0.15s ease;
+            pointer-events: auto;
+        }
+
+        [data-theme="light"] .history-insight-popover {
+            background: #ffffff;
+            border-color: #d4dce8;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.14), 0 2px 8px rgba(15, 23, 42, 0.06);
+        }
+
+        .history-insight-popover.is-open {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .history-insight-popover .popover-arrow {
+            position: absolute;
+            left: var(--arrow-left, 50%);
+            width: 10px;
+            height: 10px;
+            margin-left: -5px;
+            background: inherit;
+            transform: rotate(45deg);
+            pointer-events: none;
+        }
+
+        .history-insight-popover[data-placement="top"] .popover-arrow {
+            bottom: -6px;
+            border-right: 1px solid rgba(148, 163, 184, 0.24);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.24);
+        }
+
+        .history-insight-popover[data-placement="bottom"] .popover-arrow {
+            top: -6px;
+            border-left: 1px solid rgba(148, 163, 184, 0.24);
+            border-top: 1px solid rgba(148, 163, 184, 0.24);
+        }
+
+        [data-theme="light"] .history-insight-popover[data-placement="top"] .popover-arrow {
+            border-right-color: #d4dce8;
+            border-bottom-color: #d4dce8;
+        }
+
+        [data-theme="light"] .history-insight-popover[data-placement="bottom"] .popover-arrow {
+            border-left-color: #d4dce8;
+            border-top-color: #d4dce8;
+        }
+
+        .insight-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .insight-title {
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            color: var(--text-main);
+        }
+
+        .insight-dates {
+            font-size: 0.68rem;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+
+        .insight-total-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 999px;
+            white-space: nowrap;
+            background: var(--sunken);
+            color: var(--text-dim);
+            border: 1px solid var(--border);
+        }
+
+        .insight-total-badge.is-pos {
+            color: #34d399;
+            background: rgba(52, 211, 153, 0.12);
+            border-color: rgba(52, 211, 153, 0.28);
+        }
+
+        .insight-total-badge.is-neg {
+            color: #f87171;
+            background: rgba(248, 113, 113, 0.12);
+            border-color: rgba(248, 113, 113, 0.28);
+        }
+
+        [data-theme="light"] .insight-total-badge.is-pos {
+            color: #047857;
+            background: rgba(4, 120, 87, 0.1);
+            border-color: rgba(4, 120, 87, 0.25);
+        }
+
+        [data-theme="light"] .insight-total-badge.is-neg {
+            color: #dc2626;
+            background: rgba(220, 38, 38, 0.08);
+            border-color: rgba(220, 38, 38, 0.24);
+        }
+
+        .insight-summary {
+            font-size: 0.73rem;
+            line-height: 1.4;
+            color: var(--text-dim);
+            padding-bottom: 9px;
+            margin-bottom: 9px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .insight-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .insight-row {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .insight-row-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 0.74rem;
+        }
+
+        .insight-cat {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 0;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .insight-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .insight-val-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .insight-amount {
+            font-weight: 700;
+            font-size: 0.73rem;
+            color: var(--text-main);
+        }
+
+        .insight-amount.is-pos {
+            color: #34d399;
+        }
+
+        .insight-amount.is-neg {
+            color: #f87171;
+        }
+
+        [data-theme="light"] .insight-amount.is-pos {
+            color: #047857;
+        }
+
+        [data-theme="light"] .insight-amount.is-neg {
+            color: #dc2626;
+        }
+
+        .insight-pct {
+            font-size: 0.66rem;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 999px;
+            background: var(--sunken);
+            color: var(--text-dim);
+        }
+
+        .insight-pct.is-new {
+            color: var(--primary);
+            background: var(--primary-glow);
+        }
+
+        .insight-bar-track {
+            width: 100%;
+            height: 4px;
+            border-radius: 999px;
+            background: var(--sunken);
+            overflow: hidden;
+        }
+
+        .insight-bar-fill {
+            height: 100%;
+            border-radius: 999px;
+            min-width: 6%;
+        }
+
+        .insight-bar-fill.is-pos {
+            background: #34d399;
+        }
+
+        .insight-bar-fill.is-neg {
+            background: #f87171;
+        }
+
+        [data-theme="light"] .insight-bar-fill.is-pos {
+            background: #047857;
+        }
+
+        [data-theme="light"] .insight-bar-fill.is-neg {
+            background: #dc2626;
+        }
+
+        .insight-footer {
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px solid var(--border);
+            font-size: 0.68rem;
+            line-height: 1.4;
+            color: var(--text-dim);
+        }
+
+        .chart-tip-movers {
+            margin-top: 3px;
+            padding-top: 3px;
+            border-top: 1px solid var(--border);
+            font-size: 0.68rem;
+            color: var(--text-dim);
+        }
     </style>
 </head>
 
@@ -1269,7 +1595,7 @@
                     <div class="chart-tip" id="chartTip" hidden></div>
                 </div>
 
-                <div style="overflow-x: auto; max-height: 280px; overflow-y: auto;">
+                <div id="historyTableWrap" style="overflow-x: auto; max-height: 280px; overflow-y: auto;">
                     <table class="history-table">
                         <thead>
                             <tr>
@@ -1291,6 +1617,8 @@
             </div>
         </div>
     </div>
+
+    <div id="historyInsightPopover" class="history-insight-popover" role="dialog" aria-label="Net worth change breakdown" hidden></div>
 
     <script>
         /* ---------------------------------------------------------------
@@ -1323,6 +1651,178 @@
             cash: '#38bdf8',
             liabilities: '#ef4444'
         };
+
+        const HISTORY_BREAKDOWN_CATEGORIES = [
+            { key: 'vehicles', label: 'Vehicles', color: '#06b6d4', isLiability: false },
+            { key: 'gold', label: 'Gold', color: '#f59e0b', isLiability: false },
+            { key: 'funds', label: 'Mutual Funds', color: '#a855f7', isLiability: false },
+            { key: 'stocks', label: 'Stocks', color: '#10b981', isLiability: false },
+            { key: 'realEstate', label: 'Real Estate', color: '#818cf8', isLiability: false },
+            { key: 'cash', label: 'Cash / Other', color: '#38bdf8', isLiability: false },
+            { key: 'liabilities', label: 'Liabilities', color: '#ef4444', isLiability: true }
+        ];
+
+        function extractHistoryBreakdown(entry) {
+            if (!entry || typeof entry !== 'object') return null;
+
+            const b = entry.breakdown;
+            if (b && typeof b === 'object') {
+                const hasAny = HISTORY_BREAKDOWN_CATEGORIES.some(
+                    c => typeof b[c.key] === 'number' && Number.isFinite(b[c.key])
+                );
+                if (hasAny) {
+                    const normalized = {};
+                    HISTORY_BREAKDOWN_CATEGORIES.forEach(c => {
+                        const v = b[c.key];
+                        normalized[c.key] = (typeof v === 'number' && Number.isFinite(v)) ? v : 0;
+                    });
+                    return normalized;
+                }
+            }
+
+            const s = entry.state;
+            if (s && typeof s === 'object') {
+                const numVal = v => {
+                    const n = parseFloat(v);
+                    return Number.isFinite(n) ? n : 0;
+                };
+                const sumVals = (arr, fn) => Array.isArray(arr)
+                    ? arr.reduce((sum, item) => sum + (item && typeof item === 'object' ? (fn(item) || 0) : 0), 0)
+                    : 0;
+
+                const vehicles = sumVals(s.cars, c => numVal(c.val));
+                const gold = sumVals(s.gold, g => numVal(g.val));
+                const funds = sumVals(s.funds, f => f.val !== undefined ? numVal(f.val) : numVal(f.units) * numVal(f.nav));
+                let stocks = 0;
+                if (typeof s.stocks === 'number' && Number.isFinite(s.stocks)) {
+                    stocks = s.stocks;
+                } else if (s.stocksTotal !== undefined) {
+                    stocks = numVal(s.stocksTotal);
+                } else if (Array.isArray(s.stocks)) {
+                    stocks = sumVals(s.stocks, item => item.val !== undefined ? numVal(item.val) : numVal(item.qty) * numVal(item.price));
+                }
+                const realEstate = sumVals(s.estates, e => numVal(e.val));
+                const cash = sumVals(s.cash, c => numVal(c.val));
+                const liabilities = sumVals(s.liabilities, l => numVal(l.val));
+
+                return { vehicles, gold, funds, stocks, realEstate, cash, liabilities };
+            }
+
+            return null;
+        }
+
+        function computeHistoryBreakdownDiff(currentEntry, previousEntry) {
+            if (!currentEntry) {
+                return {
+                    hasComparison: false,
+                    reason: 'missing_entry',
+                    items: [],
+                    changed: [],
+                    unchanged: [],
+                    gainers: [],
+                    losers: [],
+                    topGainer: null,
+                    topLoser: null
+                };
+            }
+
+            const currBreakdown = extractHistoryBreakdown(currentEntry);
+
+            if (!previousEntry) {
+                const baselineItems = currBreakdown
+                    ? HISTORY_BREAKDOWN_CATEGORIES.map(c => ({
+                        key: c.key,
+                        label: c.label,
+                        color: c.color,
+                        isLiability: c.isLiability,
+                        curr: currBreakdown[c.key] || 0
+                    })).filter(i => i.curr > 0).sort((a, b) => b.curr - a.curr)
+                    : [];
+
+                return {
+                    hasComparison: false,
+                    reason: 'baseline',
+                    currDate: currentEntry.date,
+                    currNetWorth: currentEntry.netWorth,
+                    currBreakdown,
+                    items: baselineItems,
+                    changed: [],
+                    unchanged: [],
+                    gainers: [],
+                    losers: [],
+                    topGainer: null,
+                    topLoser: null
+                };
+            }
+
+            const prevBreakdown = extractHistoryBreakdown(previousEntry);
+            const totalDiff = (currentEntry.netWorth || 0) - (previousEntry.netWorth || 0);
+            const totalPct = previousEntry.netWorth > 0 ? (totalDiff / previousEntry.netWorth) * 100 : null;
+
+            if (!currBreakdown || !prevBreakdown) {
+                return {
+                    hasComparison: false,
+                    reason: 'missing_breakdown',
+                    currDate: currentEntry.date,
+                    prevDate: previousEntry.date,
+                    totalDiff,
+                    totalPct,
+                    items: [],
+                    changed: [],
+                    unchanged: [],
+                    gainers: [],
+                    losers: [],
+                    topGainer: null,
+                    topLoser: null
+                };
+            }
+
+            const items = HISTORY_BREAKDOWN_CATEGORIES.map(cat => {
+                const prev = prevBreakdown[cat.key] || 0;
+                const curr = currBreakdown[cat.key] || 0;
+                const delta = curr - prev;
+                const netImpact = cat.isLiability ? -delta : delta;
+                const isNew = prev === 0 && curr > 0;
+                const pct = prev > 0 ? (delta / prev) * 100 : (curr > 0 ? null : 0);
+                const direction = Math.abs(netImpact) <= 0.01 ? 'flat' : (netImpact > 0 ? 'up' : 'down');
+                return {
+                    key: cat.key,
+                    label: cat.label,
+                    color: cat.color,
+                    isLiability: cat.isLiability,
+                    prev,
+                    curr,
+                    delta,
+                    netImpact,
+                    pct,
+                    isNew,
+                    direction
+                };
+            });
+
+            const changed = items
+                .filter(i => Math.abs(i.delta) > 0.01)
+                .sort((a, b) => Math.abs(b.netImpact) - Math.abs(a.netImpact));
+            const unchanged = items.filter(i => Math.abs(i.delta) <= 0.01 && (i.curr > 0 || i.prev > 0));
+            const gainers = changed.filter(i => i.netImpact > 0).sort((a, b) => b.netImpact - a.netImpact);
+            const losers = changed.filter(i => i.netImpact < 0).sort((a, b) => a.netImpact - b.netImpact);
+
+            return {
+                hasComparison: true,
+                reason: 'ok',
+                currDate: currentEntry.date,
+                prevDate: previousEntry.date,
+                totalDiff,
+                totalPct,
+                items,
+                changed,
+                unchanged,
+                gainers,
+                losers,
+                topGainer: gainers[0] || null,
+                topLoser: losers[0] || null
+            };
+        }
 
         // Live rates state
         let rates = {
@@ -2014,7 +2514,7 @@
                 netWorth: currentTotals.netWorth,
                 totalAssets: currentTotals.totalAssets,
                 liabilities: currentTotals.liabilities,
-                breakdown: currentTotals,
+                breakdown: { ...currentTotals },
                 state: snapshot,
                 timestamp: Date.now()
             };
@@ -2032,10 +2532,22 @@
             updateDeltaBadge(currentTotals.netWorth);
         }
 
+        let renderedHistoryEntries = [];
+        let activeInsightIndex = null;
+        let activeInsightTrigger = null;
+        let pinnedInsightIndex = null;
+        let insightHideTimer = null;
+
         function renderHistory() {
             const hist = getHistory().sort((a, b) => b.date.localeCompare(a.date));
+            renderedHistoryEntries = hist;
+            pinnedInsightIndex = null;
+            hideHistoryInsightPopover();
+
             const tbody = document.getElementById('historyTableBody');
-            document.getElementById('historyCount').innerText = `${hist.length} entries logged`;
+            document.getElementById('historyCount').innerText = hist.length >= 2
+                ? `${hist.length} entries logged • Hover change for insights`
+                : `${hist.length} entries logged`;
 
             if (hist.length === 0) {
                 tbody.innerHTML = `
@@ -2053,30 +2565,42 @@
             hist.forEach((h, i) => {
                 const nextOlder = hist[i + 1];
                 let changeStr = '—';
-                let changeClass = 'color: var(--text-dim);';
+                let triggerClass = 'is-neutral';
 
                 if (nextOlder) {
                     const diff = h.netWorth - nextOlder.netWorth;
                     const pct = nextOlder.netWorth > 0 ? (diff / nextOlder.netWorth) * 100 : 0;
                     if (diff > 0) {
                         changeStr = `+${rs(diff)} (+${pct.toFixed(1)}%)`;
-                        changeClass = 'color: #34d399; font-weight:700;';
+                        triggerClass = 'is-pos';
                     } else if (diff < 0) {
                         changeStr = `-${rs(Math.abs(diff))} (${pct.toFixed(1)}%)`;
-                        changeClass = 'color: #f87171; font-weight:700;';
+                        triggerClass = 'is-neg';
                     } else {
                         changeStr = '0.0%';
+                        triggerClass = 'is-neutral';
                     }
                 }
 
+                const triggerLabel = nextOlder
+                    ? `View category change breakdown for ${h.date}`
+                    : `View baseline snapshot breakdown for ${h.date}`;
+                const cueHtml = nextOlder
+                    ? '<span class="insight-cue" aria-hidden="true">&#9432;</span>'
+                    : '<span class="insight-cue" aria-hidden="true" title="Baseline snapshot">&#9432;</span>';
+
                 rows += `
                     <tr>
-                        <td><strong>${h.date}</strong></td>
+                        <td><strong>${esc(h.date)}</strong></td>
                         <td style="font-weight: 700;">${rs(h.netWorth)}</td>
-                        <td style="${changeClass}">${changeStr}</td>
                         <td>
-                            <button class="act-btn" onclick="restoreSnapshot('${h.date}')">Load</button>
-                            <button class="act-btn del-btn" onclick="deleteSnapshot('${h.date}')">&times;</button>
+                            <button type="button" class="change-insight-trigger ${triggerClass}" data-history-index="${i}" aria-haspopup="dialog" aria-expanded="false" aria-label="${esc(triggerLabel)}">
+                                <span class="insight-label">${esc(changeStr)}</span>${cueHtml}
+                            </button>
+                        </td>
+                        <td>
+                            <button class="act-btn" onclick="restoreSnapshot('${esc(h.date)}')">Load</button>
+                            <button class="act-btn del-btn" onclick="deleteSnapshot('${esc(h.date)}')">&times;</button>
                         </td>
                     </tr>
                 `;
@@ -2085,6 +2609,256 @@
 
             // Render SVG chart
             renderHistoryChart(hist.slice().reverse());
+        }
+
+        function formatSignedImpact(val) {
+            if (val > 0) return `+${rs(val)}`;
+            if (val < 0) return `-${rs(Math.abs(val))}`;
+            return rs(0);
+        }
+
+        function shortInsightCategoryLabel(item) {
+            if (!item) return '';
+            if (item.isLiability) {
+                return item.netImpact > 0 ? 'Debt paydown' : 'New debt';
+            }
+            return item.label;
+        }
+
+        function buildHistoryInsightMarkup(currEntry, prevEntry) {
+            const diff = computeHistoryBreakdownDiff(currEntry, prevEntry);
+
+            if (diff.reason === 'baseline') {
+                const maxCurr = diff.items.length ? Math.max(...diff.items.map(i => i.curr), 1) : 1;
+                const totalAssets = diff.items.filter(i => !i.isLiability).reduce((s, i) => s + i.curr, 0);
+                const listHtml = diff.items.length
+                    ? diff.items.map(item => {
+                        const barWidth = Math.max(6, Math.round((item.curr / maxCurr) * 100));
+                        const pctText = item.isLiability
+                            ? 'Debt'
+                            : (totalAssets > 0 ? `${((item.curr / totalAssets) * 100).toFixed(0)}%` : '0%');
+                        const amtText = item.isLiability ? `Debt ${rs(item.curr)}` : rs(item.curr);
+                        const amtClass = item.isLiability ? 'is-neg' : '';
+                        return `
+                            <div class="insight-row">
+                                <div class="insight-row-top">
+                                    <span class="insight-cat">
+                                        <span class="insight-dot" style="background:${esc(item.color)}"></span>
+                                        <span>${esc(item.label)}</span>
+                                    </span>
+                                    <span class="insight-val-group">
+                                        <span class="insight-amount ${amtClass}">${esc(amtText)}</span>
+                                        <span class="insight-pct">${esc(pctText)}</span>
+                                    </span>
+                                </div>
+                                <div class="insight-bar-track">
+                                    <div class="insight-bar-fill" style="width:${barWidth}%; background:${esc(item.color)};"></div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')
+                    : `<div style="font-size:0.73rem; color:var(--text-dim);">Category breakdown unavailable for this snapshot.</div>`;
+
+                const summaryText = diff.items.length
+                    ? `Initial logged snapshot — ${diff.items.length} active ${diff.items.length === 1 ? 'category' : 'categories'}.`
+                    : 'Initial logged snapshot.';
+
+                return `
+                    <div class="popover-arrow"></div>
+                    <div class="insight-header">
+                        <div>
+                            <div class="insight-title">Baseline Snapshot</div>
+                            <div class="insight-dates">${esc(diff.currDate || '')} &bull; Baseline</div>
+                        </div>
+                        <span class="insight-total-badge">${esc(rs(diff.currNetWorth || 0))}</span>
+                    </div>
+                    <div class="insight-summary">${esc(summaryText)}</div>
+                    <div class="insight-list">${listHtml}</div>
+                    <div class="insight-footer">First entry in history — newer snapshots compare against this baseline.</div>
+                `;
+            }
+
+            const totalBadgeClass = diff.totalDiff > 0 ? 'is-pos' : (diff.totalDiff < 0 ? 'is-neg' : '');
+            const totalPctStr = diff.totalPct !== null
+                ? ` (${diff.totalPct > 0 ? '+' : ''}${diff.totalPct.toFixed(1)}%)`
+                : '';
+            const totalBadgeText = diff.totalDiff === 0
+                ? 'No change'
+                : `${formatSignedImpact(diff.totalDiff)}${totalPctStr}`;
+
+            if (diff.reason === 'missing_breakdown') {
+                return `
+                    <div class="popover-arrow"></div>
+                    <div class="insight-header">
+                        <div>
+                            <div class="insight-title">Change Insights</div>
+                            <div class="insight-dates">${esc(diff.currDate || '')} vs ${esc(diff.prevDate || '')}</div>
+                        </div>
+                        <span class="insight-total-badge ${totalBadgeClass}">${esc(totalBadgeText)}</span>
+                    </div>
+                    <div class="insight-summary">Category breakdown wasn't recorded for one of these snapshots.</div>
+                    <div class="insight-footer">Save new entries to track detailed category-level movements.</div>
+                `;
+            }
+
+            let summaryText = 'No category balance changes from the previous snapshot.';
+            if (diff.topGainer && diff.topLoser) {
+                summaryText = `Led by ${shortInsightCategoryLabel(diff.topGainer)} (${formatSignedImpact(diff.topGainer.netImpact)}); offset by ${shortInsightCategoryLabel(diff.topLoser)} (${formatSignedImpact(diff.topLoser.netImpact)}).`;
+            } else if (diff.topGainer) {
+                summaryText = `Driven by ${shortInsightCategoryLabel(diff.topGainer)} (${formatSignedImpact(diff.topGainer.netImpact)}).`;
+            } else if (diff.topLoser) {
+                summaryText = `Pulled down by ${shortInsightCategoryLabel(diff.topLoser)} (${formatSignedImpact(diff.topLoser.netImpact)}).`;
+            }
+
+            const maxImpact = diff.changed.length
+                ? Math.max(...diff.changed.map(i => Math.abs(i.netImpact)), 1)
+                : 1;
+
+            const listHtml = diff.changed.length
+                ? diff.changed.map(item => {
+                    const isPosImpact = item.netImpact >= 0;
+                    const dirClass = isPosImpact ? 'is-pos' : 'is-neg';
+                    const barWidth = Math.max(6, Math.round((Math.abs(item.netImpact) / maxImpact) * 100));
+
+                    let amtText;
+                    if (item.isLiability) {
+                        amtText = item.delta > 0
+                            ? `Debt +${rs(item.delta)}`
+                            : `Debt -${rs(Math.abs(item.delta))}`;
+                    } else {
+                        amtText = item.delta > 0
+                            ? `+${rs(item.delta)}`
+                            : `-${rs(Math.abs(item.delta))}`;
+                    }
+
+                    let pctBadgeText = '';
+                    let pctClass = '';
+                    if (item.isNew) {
+                        pctBadgeText = 'New';
+                        pctClass = 'is-new';
+                    } else if (item.pct === null) {
+                        pctBadgeText = 'New';
+                        pctClass = 'is-new';
+                    } else {
+                        pctBadgeText = `${item.pct > 0 ? '+' : ''}${item.pct.toFixed(1)}%`;
+                    }
+
+                    return `
+                        <div class="insight-row">
+                            <div class="insight-row-top">
+                                <span class="insight-cat">
+                                    <span class="insight-dot" style="background:${esc(item.color)}"></span>
+                                    <span>${esc(item.label)}</span>
+                                </span>
+                                <span class="insight-val-group">
+                                    <span class="insight-amount ${dirClass}">${esc(amtText)}</span>
+                                    <span class="insight-pct ${pctClass}">${esc(pctBadgeText)}</span>
+                                </span>
+                            </div>
+                            <div class="insight-bar-track">
+                                <div class="insight-bar-fill ${dirClass}" style="width:${barWidth}%;"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')
+                : `<div style="font-size:0.73rem; color:var(--text-dim);">All tracked categories remained flat.</div>`;
+
+            const footerText = diff.unchanged.length > 0
+                ? `Unchanged: ${diff.unchanged.map(u => u.label).join(', ')}`
+                : (diff.changed.length > 0 ? 'All active categories moved in this period.' : 'No active category balances changed.');
+
+            return `
+                <div class="popover-arrow"></div>
+                <div class="insight-header">
+                    <div>
+                        <div class="insight-title">Change Insights</div>
+                        <div class="insight-dates">${esc(diff.currDate || '')} vs ${esc(diff.prevDate || '')}</div>
+                    </div>
+                    <span class="insight-total-badge ${totalBadgeClass}">${esc(totalBadgeText)}</span>
+                </div>
+                <div class="insight-summary">${esc(summaryText)}</div>
+                <div class="insight-list">${listHtml}</div>
+                <div class="insight-footer">${esc(footerText)}</div>
+            `;
+        }
+
+        function positionHistoryInsightPopover(popover, trigger) {
+            const rect = trigger.getBoundingClientRect();
+            const popW = popover.offsetWidth || 310;
+            const popH = popover.offsetHeight || 180;
+            const margin = 12;
+            const gap = 10;
+
+            let placement = 'top';
+            let top = rect.top - popH - gap;
+            if (top < margin && (window.innerHeight - rect.bottom - gap - margin) > (rect.top - margin)) {
+                placement = 'bottom';
+                top = rect.bottom + gap;
+            }
+            top = Math.max(margin, Math.min(top, window.innerHeight - popH - margin));
+
+            const triggerCenter = rect.left + rect.width / 2;
+            let left = triggerCenter - popW / 2;
+            left = Math.max(margin, Math.min(left, window.innerWidth - popW - margin));
+
+            const arrowLeft = Math.max(16, Math.min(popW - 16, triggerCenter - left));
+            popover.style.setProperty('--arrow-left', arrowLeft + 'px');
+            popover.dataset.placement = placement;
+            popover.style.left = Math.round(left) + 'px';
+            popover.style.top = Math.round(top) + 'px';
+        }
+
+        function showHistoryInsightPopover(index, trigger) {
+            const entry = renderedHistoryEntries[index];
+            const popover = document.getElementById('historyInsightPopover');
+            if (!entry || !trigger || !popover) return;
+
+            if (activeInsightTrigger && activeInsightTrigger !== trigger) {
+                activeInsightTrigger.setAttribute('aria-expanded', 'false');
+            }
+
+            const prevEntry = renderedHistoryEntries[index + 1] || null;
+            popover.innerHTML = buildHistoryInsightMarkup(entry, prevEntry);
+            popover.classList.remove('is-open');
+            popover.hidden = false;
+
+            positionHistoryInsightPopover(popover, trigger);
+            activeInsightIndex = index;
+            activeInsightTrigger = trigger;
+            trigger.setAttribute('aria-expanded', 'true');
+
+            requestAnimationFrame(() => {
+                if (activeInsightIndex === index && !popover.hidden) {
+                    popover.classList.add('is-open');
+                }
+            });
+        }
+
+        function hideHistoryInsightPopover() {
+            clearTimeout(insightHideTimer);
+            const popover = document.getElementById('historyInsightPopover');
+            if (activeInsightTrigger) {
+                activeInsightTrigger.setAttribute('aria-expanded', 'false');
+            }
+            activeInsightIndex = null;
+            activeInsightTrigger = null;
+            if (popover) {
+                popover.classList.remove('is-open');
+                popover.hidden = true;
+            }
+        }
+
+        function scheduleHideInsightPopover() {
+            clearTimeout(insightHideTimer);
+            insightHideTimer = setTimeout(() => {
+                if (pinnedInsightIndex === null) {
+                    hideHistoryInsightPopover();
+                }
+            }, 150);
+        }
+
+        function cancelHideInsightPopover() {
+            clearTimeout(insightHideTimer);
         }
 
         function restoreSnapshot(date) {
@@ -2167,7 +2941,22 @@
             const tip = document.getElementById('chartTip');
             const hair = document.getElementById('chartHair');
 
-            tip.innerHTML = `<b>${pt.date}</b><br>Net Worth: <strong>${rs(pt.netWorth)}</strong>`;
+            let moversHtml = '';
+            if (idx > 0) {
+                const diff = computeHistoryBreakdownDiff(pt, chartDataPoints[idx - 1]);
+                if (diff && diff.hasComparison && (diff.topGainer || diff.topLoser)) {
+                    const parts = [];
+                    if (diff.topGainer) {
+                        parts.push(`▲ ${esc(shortInsightCategoryLabel(diff.topGainer))} (${esc(formatSignedImpact(diff.topGainer.netImpact))})`);
+                    }
+                    if (diff.topLoser) {
+                        parts.push(`▼ ${esc(shortInsightCategoryLabel(diff.topLoser))} (${esc(formatSignedImpact(diff.topLoser.netImpact))})`);
+                    }
+                    moversHtml = `<div class="chart-tip-movers">${parts.join(' &bull; ')}</div>`;
+                }
+            }
+
+            tip.innerHTML = `<b>${esc(pt.date)}</b><br>Net Worth: <strong>${esc(rs(pt.netWorth))}</strong>${moversHtml}`;
             const xPos = (pt.x / 360) * box.width;
             hair.style.left = xPos + 'px';
             hair.style.height = box.height + 'px';
@@ -2395,6 +3184,9 @@
             b.classList.toggle('on', masked);
             calculateNetWorth();
             recalculateGoldRows();
+            pinnedInsightIndex = null;
+            hideHistoryInsightPopover();
+            renderHistory();
         }
 
         let toastTimer = null;
@@ -2492,6 +3284,109 @@
             const chartWrap = document.getElementById('chartWrap');
             chartWrap.addEventListener('pointermove', onChartHover);
             chartWrap.addEventListener('pointerleave', onChartLeave);
+
+            // History change insight popover interactions
+            const historyBody = document.getElementById('historyTableBody');
+            const insightPopover = document.getElementById('historyInsightPopover');
+            const historyTableWrap = document.getElementById('historyTableWrap');
+
+            historyBody.addEventListener('mouseover', ev => {
+                const trigger = ev.target.closest('.change-insight-trigger');
+                if (!trigger) return;
+                if (ev.relatedTarget && trigger.contains(ev.relatedTarget)) return;
+                cancelHideInsightPopover();
+                if (pinnedInsightIndex !== null) return;
+                const idx = Number(trigger.dataset.historyIndex);
+                if (Number.isInteger(idx)) showHistoryInsightPopover(idx, trigger);
+            });
+
+            historyBody.addEventListener('mouseout', ev => {
+                const trigger = ev.target.closest('.change-insight-trigger');
+                if (!trigger) return;
+                if (ev.relatedTarget && (trigger.contains(ev.relatedTarget) || (insightPopover && insightPopover.contains(ev.relatedTarget)))) {
+                    return;
+                }
+                if (pinnedInsightIndex === null) scheduleHideInsightPopover();
+            });
+
+            historyBody.addEventListener('focusin', ev => {
+                const trigger = ev.target.closest('.change-insight-trigger');
+                if (!trigger || pinnedInsightIndex !== null) return;
+                cancelHideInsightPopover();
+                const idx = Number(trigger.dataset.historyIndex);
+                if (Number.isInteger(idx)) showHistoryInsightPopover(idx, trigger);
+            });
+
+            historyBody.addEventListener('focusout', ev => {
+                const trigger = ev.target.closest('.change-insight-trigger');
+                if (!trigger || pinnedInsightIndex !== null) return;
+                if (ev.relatedTarget && insightPopover && insightPopover.contains(ev.relatedTarget)) return;
+                scheduleHideInsightPopover();
+            });
+
+            historyBody.addEventListener('click', ev => {
+                const trigger = ev.target.closest('.change-insight-trigger');
+                if (!trigger) return;
+                const idx = Number(trigger.dataset.historyIndex);
+                if (!Number.isInteger(idx)) return;
+                if (pinnedInsightIndex === idx) {
+                    pinnedInsightIndex = null;
+                    hideHistoryInsightPopover();
+                } else {
+                    pinnedInsightIndex = idx;
+                    cancelHideInsightPopover();
+                    showHistoryInsightPopover(idx, trigger);
+                }
+            });
+
+            if (insightPopover) {
+                insightPopover.addEventListener('mouseenter', cancelHideInsightPopover);
+                insightPopover.addEventListener('mouseleave', () => {
+                    if (pinnedInsightIndex === null) scheduleHideInsightPopover();
+                });
+            }
+
+            if (historyTableWrap) {
+                historyTableWrap.addEventListener('scroll', () => {
+                    if (activeInsightIndex !== null) {
+                        pinnedInsightIndex = null;
+                        hideHistoryInsightPopover();
+                    }
+                }, { passive: true });
+            }
+
+            window.addEventListener('scroll', () => {
+                if (activeInsightIndex !== null) {
+                    pinnedInsightIndex = null;
+                    hideHistoryInsightPopover();
+                }
+            }, { passive: true });
+
+            window.addEventListener('resize', () => {
+                if (activeInsightIndex !== null) {
+                    pinnedInsightIndex = null;
+                    hideHistoryInsightPopover();
+                }
+            });
+
+            document.addEventListener('keydown', ev => {
+                if (ev.key === 'Escape' && activeInsightIndex !== null) {
+                    const prevTrigger = activeInsightTrigger;
+                    pinnedInsightIndex = null;
+                    hideHistoryInsightPopover();
+                    if (prevTrigger && document.activeElement !== prevTrigger && insightPopover && insightPopover.contains(document.activeElement)) {
+                        prevTrigger.focus();
+                    }
+                }
+            });
+
+            document.addEventListener('click', ev => {
+                if (activeInsightIndex === null) return;
+                if (insightPopover && insightPopover.contains(ev.target)) return;
+                if (ev.target.closest && ev.target.closest('.change-insight-trigger')) return;
+                pinnedInsightIndex = null;
+                hideHistoryInsightPopover();
+            });
 
             // Fetch live rates silently in background
             fetchLiveRates();

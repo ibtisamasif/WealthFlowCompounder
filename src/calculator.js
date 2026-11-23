@@ -256,19 +256,224 @@ function scaleHoldingToNetWorth(holdingVal, { totalAssets = 0, netWorth = 0, lia
     return val * (base / assets);
 }
 
-module.exports = {
-    MAX_YEARS,
-    WITHDRAW,
-    KARAT_PURITY,
-    TOLA_PER_OZT,
-    GRAM_PER_OZT,
-    project,
-    calculatePortfolioBreakdown,
-    compact,
-    full,
-    rs,
-    getGoldRate,
-    computeNetWorth,
-    resolveNetWorthPortfolioBase,
-    scaleHoldingToNetWorth
-};
+const HISTORY_BREAKDOWN_CATEGORIES = [
+    { key: 'vehicles', label: 'Vehicles', color: '#06b6d4', isLiability: false },
+    { key: 'gold', label: 'Gold', color: '#f59e0b', isLiability: false },
+    { key: 'funds', label: 'Mutual Funds', color: '#a855f7', isLiability: false },
+    { key: 'stocks', label: 'Stocks', color: '#10b981', isLiability: false },
+    { key: 'realEstate', label: 'Real Estate', color: '#818cf8', isLiability: false },
+    { key: 'cash', label: 'Cash / Other', color: '#38bdf8', isLiability: false },
+    { key: 'liabilities', label: 'Liabilities', color: '#ef4444', isLiability: true }
+];
+
+function sumStateValList(list) {
+    if (!Array.isArray(list)) return 0;
+    return list.reduce((sum, item) => sum + (item ? (parseFloat(item.val) || 0) : 0), 0);
+}
+
+/**
+ * Extracts normalized 7-category breakdown totals from a net worth history entry.
+ * Prefers `entry.breakdown`, falling back to deriving totals from legacy `entry.state`.
+ */
+function extractHistoryBreakdown(entry) {
+    if (!entry || typeof entry !== 'object') return null;
+
+    if (entry.breakdown && typeof entry.breakdown === 'object') {
+        const b = entry.breakdown;
+        const hasAnyKey = HISTORY_BREAKDOWN_CATEGORIES.some(cat => Number.isFinite(b[cat.key]));
+        if (hasAnyKey) {
+            return {
+                vehicles: Number.isFinite(b.vehicles) ? b.vehicles : 0,
+                gold: Number.isFinite(b.gold) ? b.gold : 0,
+                funds: Number.isFinite(b.funds) ? b.funds : 0,
+                stocks: Number.isFinite(b.stocks) ? b.stocks : 0,
+                realEstate: Number.isFinite(b.realEstate) ? b.realEstate : 0,
+                cash: Number.isFinite(b.cash) ? b.cash : 0,
+                liabilities: Number.isFinite(b.liabilities) ? b.liabilities : 0
+            };
+        }
+    }
+
+    if (entry.state && typeof entry.state === 'object') {
+        const s = entry.state;
+        const funds = Array.isArray(s.funds)
+            ? s.funds.reduce((sum, f) => {
+                if (!f) return sum;
+                const val = f.val !== undefined
+                    ? parseFloat(f.val)
+                    : (parseFloat(f.units) || 0) * (parseFloat(f.nav) || 0);
+                return sum + (val || 0);
+            }, 0)
+            : 0;
+
+        let stocks = 0;
+        if (typeof s.stocks === 'number') {
+            stocks = Number.isFinite(s.stocks) ? s.stocks : 0;
+        } else if (s.stocksTotal !== undefined) {
+            stocks = parseFloat(s.stocksTotal) || 0;
+        } else if (Array.isArray(s.stocks)) {
+            stocks = s.stocks.reduce((sum, item) => {
+                if (!item) return sum;
+                const val = item.val !== undefined
+                    ? parseFloat(item.val)
+                    : (parseFloat(item.qty) || 0) * (parseFloat(item.price) || 0);
+                return sum + (val || 0);
+            }, 0);
+        }
+
+        return {
+            vehicles: sumStateValList(s.cars),
+            gold: sumStateValList(s.gold),
+            funds,
+            stocks,
+            realEstate: sumStateValList(s.estates),
+            cash: sumStateValList(s.cash),
+            liabilities: sumStateValList(s.liabilities)
+        };
+    }
+
+    return null;
+}
+
+/**
+ * Computes category-level net worth drivers between two history entries.
+ */
+function computeHistoryBreakdownDiff(currentEntry, previousEntry) {
+    if (!currentEntry) {
+        return {
+            hasComparison: false,
+            reason: 'missing_entry',
+            items: [],
+            changed: [],
+            unchanged: [],
+            gainers: [],
+            losers: [],
+            topGainer: null,
+            topLoser: null
+        };
+    }
+
+    const currBreakdown = extractHistoryBreakdown(currentEntry);
+
+    if (!previousEntry) {
+        const baselineItems = currBreakdown
+            ? HISTORY_BREAKDOWN_CATEGORIES
+                .map(({ key, label, color, isLiability }) => ({
+                    key,
+                    label,
+                    color,
+                    isLiability,
+                    curr: currBreakdown[key] || 0
+                }))
+                .filter(item => item.curr > 0)
+                .sort((a, b) => b.curr - a.curr)
+            : [];
+
+        return {
+            hasComparison: false,
+            reason: 'baseline',
+            currDate: currentEntry.date,
+            currNetWorth: currentEntry.netWorth,
+            currBreakdown,
+            items: baselineItems,
+            changed: [],
+            unchanged: [],
+            gainers: [],
+            losers: [],
+            topGainer: null,
+            topLoser: null
+        };
+    }
+
+    const prevBreakdown = extractHistoryBreakdown(previousEntry);
+    const totalDiff = (currentEntry.netWorth || 0) - (previousEntry.netWorth || 0);
+    const totalPct = previousEntry.netWorth > 0 ? (totalDiff / previousEntry.netWorth) * 100 : null;
+
+    if (!currBreakdown || !prevBreakdown) {
+        return {
+            hasComparison: false,
+            reason: 'missing_breakdown',
+            currDate: currentEntry.date,
+            prevDate: previousEntry.date,
+            totalDiff,
+            totalPct,
+            items: [],
+            changed: [],
+            unchanged: [],
+            gainers: [],
+            losers: [],
+            topGainer: null,
+            topLoser: null
+        };
+    }
+
+    const items = HISTORY_BREAKDOWN_CATEGORIES.map(({ key, label, color, isLiability }) => {
+        const prev = prevBreakdown[key] || 0;
+        const curr = currBreakdown[key] || 0;
+        const delta = curr - prev;
+        const netImpact = isLiability ? -delta : delta;
+        const isNew = prev === 0 && curr > 0;
+        const pct = prev > 0 ? (delta / prev) * 100 : (curr > 0 ? null : 0);
+        const direction = Math.abs(netImpact) <= 0.01 ? 'flat' : (netImpact > 0 ? 'up' : 'down');
+
+        return {
+            key,
+            label,
+            color,
+            isLiability,
+            prev,
+            curr,
+            delta,
+            netImpact,
+            pct,
+            isNew,
+            direction
+        };
+    });
+
+    const changed = items
+        .filter(i => Math.abs(i.delta) > 0.01)
+        .sort((a, b) => Math.abs(b.netImpact) - Math.abs(a.netImpact));
+
+    const unchanged = items.filter(i => Math.abs(i.delta) <= 0.01 && (i.curr > 0 || i.prev > 0));
+    const gainers = changed.filter(i => i.netImpact > 0).sort((a, b) => b.netImpact - a.netImpact);
+    const losers = changed.filter(i => i.netImpact < 0).sort((a, b) => a.netImpact - b.netImpact);
+
+    return {
+        hasComparison: true,
+        reason: 'ok',
+        currDate: currentEntry.date,
+        prevDate: previousEntry.date,
+        totalDiff,
+        totalPct,
+        items,
+        changed,
+        unchanged,
+        gainers,
+        losers,
+        topGainer: gainers[0] || null,
+        topLoser: losers[0] || null
+    };
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        MAX_YEARS,
+        WITHDRAW,
+        KARAT_PURITY,
+        TOLA_PER_OZT,
+        GRAM_PER_OZT,
+        HISTORY_BREAKDOWN_CATEGORIES,
+        project,
+        calculatePortfolioBreakdown,
+        compact,
+        full,
+        rs,
+        getGoldRate,
+        computeNetWorth,
+        resolveNetWorthPortfolioBase,
+        scaleHoldingToNetWorth,
+        extractHistoryBreakdown,
+        computeHistoryBreakdownDiff
+    };
+}
